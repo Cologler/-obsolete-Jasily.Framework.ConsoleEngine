@@ -5,18 +5,12 @@ using System.Reflection;
 
 namespace Jasily.Framework.ConsoleEngine.Mappers
 {
-    public class CommandMapper : NameableMapper<CommandAttribute>
+    public class CommandMapper : BaseMapper<CommandAttribute>
     {
-        private readonly CommandAttribute commandAttribute;
-
         private CommandMapper(Type type, CommandAttribute commandAttribute)
-            : base(commandAttribute)
+            : base(type, commandAttribute)
         {
-            this.commandAttribute = commandAttribute;
-            this.Type = type;
         }
-
-        public Type Type { get; }
 
         public override string Name => this.Command;
 
@@ -47,6 +41,8 @@ namespace Jasily.Framework.ConsoleEngine.Mappers
 
             mapper.ParameterSetterBuilder = CommandParameterSetterBuilder.TryCreate(engine, mapper);
             if (mapper.ParameterSetterBuilder == null) return null;
+
+            if (!mapper.Map()) return null;
 
             return mapper;
         }

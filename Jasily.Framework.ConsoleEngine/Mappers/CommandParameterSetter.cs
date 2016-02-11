@@ -53,9 +53,9 @@ namespace Jasily.Framework.ConsoleEngine.Mappers
                 if (this.IsSeted) return $"parameter {this.Mapper.Name} already seted!";
                 this.IsSeted = true;
                 object x = null;
-                if (!agent.Convert(this.Mapper.Type, value, out x))
+                if (!agent.Convert(this.Mapper.MapedType, value, out x))
                 {
-                    var vaild = agent.GetVaildInput(this.Mapper.Type);
+                    var vaild = agent.GetVaildInput(this.Mapper.MapedType);
                     return $"{value} cannot convert to parameter {this.Mapper.Name}, vaild input should be {vaild}.";
                 }
                 this.Mapper.Setter(obj, x);

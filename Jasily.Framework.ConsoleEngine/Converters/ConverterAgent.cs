@@ -3,11 +3,14 @@ using System;
 
 namespace Jasily.Framework.ConsoleEngine.Converters
 {
-    public class ConverterAgent
+    public struct ConverterAgent
     {
-        public ConvertersMapper ConvertersMapper { get; } = new ConvertersMapper();
+        public ConvertersMapper ConvertersMapper { get; }
 
-        public IConverter EnumConverter { get; } = new EnumConverter();
+        public ConverterAgent(ConvertersMapper convertersMapper)
+        {
+            this.ConvertersMapper = convertersMapper;
+        }
 
         public bool CanConvert(Type to)
         {
@@ -21,12 +24,14 @@ namespace Jasily.Framework.ConsoleEngine.Converters
                 output = input;
                 return true;
             }
+
             var converter = this.ConvertersMapper[to];
             if (converter != null)
             {
                 return converter.Convert(to, input, out output);
             }
-            return this.EnumConverter.Convert(to, input, out output);
+
+            return this.ConvertersMapper.EnumConverter.Convert(to, input, out output);
         }
 
         public string GetVaildInput(Type to)
@@ -36,7 +41,7 @@ namespace Jasily.Framework.ConsoleEngine.Converters
             {
                 return converter.GetVaildInput(to);
             }
-            return this.EnumConverter.GetVaildInput(to);
+            return this.ConvertersMapper.EnumConverter.GetVaildInput(to);
         }
     }
 }

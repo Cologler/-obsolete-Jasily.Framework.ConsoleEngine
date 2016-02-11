@@ -2,18 +2,19 @@
 using Jasily.Framework.ConsoleEngine.Mappers;
 using Jasily.Framework.ConsoleEngine.Parameters;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Jasily.Framework.ConsoleEngine.Formaters
 {
     public class ParametersFormater : IParametersFormater
     {
-        public IEnumerable<string> Format(CommandMapper commandMapper, IEnumerable<ParameterMapper> mappers,
+        public IEnumerable<FormatedString> Format(CommandMapper commandMapper, IEnumerable<ParameterMapper> mappers,
             ICommandParameterParser parser)
         {
             foreach (var mapper in mappers)
             {
-                var name = string.Join("/", mapper.GetNames());
-                yield return $"{name}";
+                var names = string.Join("/", mapper.GetNames());
+                yield return $"{names} {parser.GetInputSytle(mapper.Name)}\t\t\t{mapper.Desciption}";
             }
         }
 

@@ -20,7 +20,7 @@ namespace Jasily.Framework.ConsoleEngine.Mappers
         {
             var builder = new CommandParameterSetterBuilder();
             var dict = new Dictionary<string, bool>();
-            foreach (var property in mapper.Type.GetProperties())
+            foreach (var property in mapper.MapedType.GetProperties())
             {
                 var attr = property.GetCustomAttribute<ParameterAttribute>();
 
@@ -39,7 +39,9 @@ namespace Jasily.Framework.ConsoleEngine.Mappers
                         return null;
                     }
                     var setter = new Action<object, object>(property.SetValue);
-                    var parameterMapper = new ParameterMapper(property.PropertyType, attr, setter);
+                    var parameterMapper = new ParameterMapper(property, property.PropertyType, attr, setter);
+                    if (!parameterMapper.Map()) return null;
+
                     foreach (var parameterName in parameterMapper.GetNames())
                     {
                         if (dict.ContainsKey(parameterName))
@@ -53,6 +55,7 @@ namespace Jasily.Framework.ConsoleEngine.Mappers
                             dict.Add(parameterName, false);
                         }
                     }
+                    
                     builder.parameterMappers.Add(parameterMapper);
                 }
             }

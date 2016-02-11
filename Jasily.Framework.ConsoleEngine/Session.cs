@@ -20,7 +20,11 @@ namespace Jasily.Framework.ConsoleEngine
 
         public Dictionary<string, object> State { get; } = new Dictionary<string, object>();
 
-        public void Help() => this.Execute(this.Engine.GetCommandMember(z => z.Helper), CommandLine.Empty);
+        public void Help()
+            => this.Execute(this.Engine.GetCommandMember(z => z.Helper), CommandLine.Empty);
+
+        public void Help(CommandLine commandLine)
+            => this.Execute(this.Engine.GetCommandMember(z => z.Helper), commandLine);
 
         public void Execute(string command)
         {
@@ -37,7 +41,7 @@ namespace Jasily.Framework.ConsoleEngine
             }
             else
             {
-                var mapper = this.Engine.GetFirstMatch(commandLine.CommandBlock.Command);
+                var mapper = this.GetCommandMapper(commandLine);
                 if (mapper != null)
                 {
                     this.Execute(mapper, commandLine);
@@ -45,6 +49,12 @@ namespace Jasily.Framework.ConsoleEngine
                 }
                 this.Execute(this.Engine.GetCommandMember(z => z.Helper), commandLine);
             }
+        }
+
+        public CommandMapper GetCommandMapper(CommandLine commandLine)
+        {
+            if (commandLine.CommandBlock == null) return null;
+            return this.Engine.MapperManager.GetCommand(commandLine);
         }
 
         private void Execute(CommandMapper mapper, CommandLine command)
@@ -70,6 +80,7 @@ namespace Jasily.Framework.ConsoleEngine
                 this.Engine.GetCommandMember(z => z.MissingParametersFormater)
                     .Format(this.Engine.GetCommandMember(z => z.Output), mapper, missing,
                         this.Engine.GetCommandMember(z => z.CommandParameterParser));
+                this.Help(command);
             }
         }
 
@@ -83,8 +94,10 @@ namespace Jasily.Framework.ConsoleEngine
 
         }
 
-        public void Write(string value) => this.Engine.GetCommandMember(z => z.Output).Write(value);
+        public void Write(string value)
+            => this.Engine.GetCommandMember(z => z.Output).Write(value);
 
-        public void WriteLine(string line = null) => this.Engine.GetCommandMember(z => z.Output).WriteLine(line ?? string.Empty);
+        public void WriteLine(string line = null)
+            => this.Engine.GetCommandMember(z => z.Output).WriteLine(line ?? string.Empty);
     }
 }

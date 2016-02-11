@@ -31,13 +31,13 @@ namespace Jasily.Framework.ConsoleEngine.Mappers
 
         internal static CommandBuilder TryCreate(CommandMapper mapper)
         {
-            var constructors = mapper.Type.GetConstructors().ToArray();
+            var constructors = mapper.MapedType.GetConstructors().ToArray();
             foreach (var constructor in constructors)
             {
                 var parameters = constructor.GetParameters().ToArray();
                 if (parameters.Length == 0)
                 {
-                    return new CommandBuilder(mapper.Attribute.IsStatic, () => Activator.CreateInstance(mapper.Type));
+                    return new CommandBuilder(mapper.Attribute.IsStatic, () => Activator.CreateInstance(mapper.MapedType));
                 }
             }
             return null;

@@ -1,10 +1,10 @@
 namespace Jasily.Framework.ConsoleEngine.Commands
 {
-    public class DefaultNoneCommand : ICommand
+    public class NoneCommandHandler : ICommand
     {
         public void Execute(Session session, CommandLine line)
         {
-            session.WriteLine("user was input nothing.");
+            session.WriteLine("try use --help");
         }
     }
 }

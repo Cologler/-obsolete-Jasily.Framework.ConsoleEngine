@@ -1,48 +1,110 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Jasily.Framework.ConsoleEngine.Parameters
 {
     public class CommandParameterParser : ICommandParameterParser
     {
-        private readonly bool ignoreCase;
-        private readonly string startStyle;
+        public bool IgnoreCase { get; set; } = true;
 
-        public CommandParameterParser(bool ignoreCase, string startStyle = "-", string keyValueSpliter = ":")
-        {
-            this.Spliter = keyValueSpliter;
-            this.ignoreCase = ignoreCase;
-            this.startStyle = startStyle;
-        }
+        public string Spliter { get; set; } = ":";
 
-        public string Spliter { get; }
+        public ParameterStyle Style { get; set; } = ParameterStyle.DoubleBar | ParameterStyle.Bar |
+                                                    ParameterStyle.Backslash | ParameterStyle.Slash;
 
-        public KeyValuePair<string, string>? TryParse(CommandBlock block)
-        {
-            var comparison = this.ignoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
-            var text = block.OriginText;
-            if (text.StartsWith(this.startStyle, comparison))
-            {
-                var index = text.IndexOf(this.Spliter, this.startStyle.Length, comparison);
-                if (index > -1)
-                {
-                    return new KeyValuePair<string, string>(
-                        text.Substring(this.startStyle.Length, index - this.startStyle.Length),
-                        text.Substring(index + this.Spliter.Length));
-                }
-            }
-            return null;
-        }
+        public ParameterStyle DisplayStyle { get; set; } = ParameterStyle.Bar;
+
+        public ParameterSpliterStyle SpliterStyle { get; set; } = ParameterSpliterStyle.Colon;
 
         public string GetInputSytle(string key)
-            => $"{this.startStyle}{key}{this.Spliter}$(arg)";
+        {
+            var headers = ParameterHeader.Parse(this.DisplayStyle).ToArray();
+            var spliter = ParameterSpliter.Parse(this.SpliterStyle).First().Spliter;
+            if (headers.Length > 0) return $"{headers[0].Header}{key}{spliter}<{key}>";
+            else return $"none parameter style";
+        }
 
         public IEnumerable<KeyValuePair<string, string>> Parse(IEnumerable<CommandBlock> blocks)
         {
+            var comparison = this.IgnoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
+            var headers = ParameterHeader.Parse(this.Style).ToArray();
+            var spliters = ParameterSpliter.Parse(this.SpliterStyle).ToArray();
+
             foreach (var block in blocks)
             {
-                var kvp = this.TryParse(block);
-                if (kvp != null) yield return kvp.Value;
+                foreach (var header in headers)
+                {
+                    if (block.OriginText.StartsWith(header.Header))
+                    {
+                        var spliterLength = 1;
+                        var index = -1;
+                        foreach (var spliter in spliters)
+                        {
+                            index = block.OriginText.IndexOf(spliter.Spliter, header.Header.Length, comparison);
+                            if (index >= 0)
+                            {
+                                spliterLength = spliter.Spliter.Length;
+                                break;
+                            }
+                        }
+                        if (index < 0)
+                        {
+                            yield return new KeyValuePair<string, string>(
+                                block.OriginText.Substring(header.Header.Length),
+                                string.Empty);
+                        }
+                        else
+                        {
+                            yield return new KeyValuePair<string, string>(
+                                block.OriginText.Substring(header.Header.Length, index - header.Header.Length),
+                                block.OriginText.Substring(index + spliterLength));
+                        }
+                        break;
+                    }
+                }
+            }
+        }
+
+        private struct ParameterHeader
+        {
+            public string Header { get; }
+
+            private ParameterHeader(string header)
+            {
+                this.Header = header;
+            }
+
+            public static IEnumerable<ParameterHeader> Parse(ParameterStyle style)
+            {
+                if ((style & ParameterStyle.DoubleBar) == ParameterStyle.DoubleBar)
+                    yield return new ParameterHeader("--");
+                if ((style & ParameterStyle.Bar) == ParameterStyle.Bar)
+                    yield return new ParameterHeader("-");
+                if ((style & ParameterStyle.Slash) == ParameterStyle.Slash)
+                    yield return new ParameterHeader("/");
+                if ((style & ParameterStyle.Backslash) == ParameterStyle.Backslash)
+                    yield return new ParameterHeader("\\");
+            }
+        }
+
+        private struct ParameterSpliter
+        {
+            public string Spliter { get; }
+
+            private ParameterSpliter(string spliter)
+            {
+                this.Spliter = spliter;
+            }
+
+            public static IEnumerable<ParameterSpliter> Parse(ParameterSpliterStyle style)
+            {
+                if ((style & ParameterSpliterStyle.Spaces) == ParameterSpliterStyle.Spaces)
+                    yield return new ParameterSpliter(" ");
+                if ((style & ParameterSpliterStyle.Colon) == ParameterSpliterStyle.Colon)
+                    yield return new ParameterSpliter(":");
+                if ((style & ParameterSpliterStyle.EqualsSign) == ParameterSpliterStyle.EqualsSign)
+                    yield return new ParameterSpliter("=");
             }
         }
     }

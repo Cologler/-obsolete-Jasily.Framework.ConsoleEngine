@@ -1,18 +1,16 @@
 using Jasily.Framework.ConsoleEngine.Attributes;
 using System;
+using System.Reflection;
 
 namespace Jasily.Framework.ConsoleEngine.Mappers
 {
-    public class ParameterMapper : NameableMapper<ParameterAttribute>
+    public class ParameterMapper : BaseMapper<ParameterAttribute>
     {
-        public Type Type { get; }
-
         public Action<object, object> Setter { get; }
 
-        public ParameterMapper(Type type, ParameterAttribute attr, Action<object, object> setter)
-            : base(attr)
+        public ParameterMapper(PropertyInfo source, Type type, ParameterAttribute attr, Action<object, object> setter)
+            : base(source, type, attr)
         {
-            this.Type = type;
             this.Setter = setter;
         }
     }

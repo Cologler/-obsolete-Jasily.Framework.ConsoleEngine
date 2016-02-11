@@ -8,13 +8,11 @@ namespace Jasily.Framework.ConsoleEngine.Formaters
 {
     public class MissingParametersFormater : IParametersFormater
     {
-        public IEnumerable<string> Format(CommandMapper commandMapper, IEnumerable<ParameterMapper> mappers,
+        public IEnumerable<FormatedString> Format(CommandMapper commandMapper, IEnumerable<ParameterMapper> mappers,
             ICommandParameterParser parser)
         {
-            foreach (var mapper in mappers)
-            {
-                yield return $"missing parameter: {mapper.GetNames().First()}.";
-            }
+            var names = string.Join(", ", mappers.Select(z => z.Name));
+            yield return $"missing parameter: {names}.";
         }
 
         public void Format(IOutput output, CommandMapper commandMapper, IEnumerable<ParameterMapper> mappers,

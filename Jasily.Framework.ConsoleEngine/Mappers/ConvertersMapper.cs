@@ -32,5 +32,9 @@ namespace Jasily.Framework.ConsoleEngine.Mappers
         }
 
         public IConverter this[Type t] => this.converters.GetValueOrDefault(t);
+
+        public IConverter EnumConverter { get; } = new EnumConverter();
+
+        public ConverterAgent GetAgent() => new ConverterAgent(this);
     }
 }
