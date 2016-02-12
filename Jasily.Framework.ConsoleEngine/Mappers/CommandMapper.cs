@@ -60,7 +60,7 @@ namespace Jasily.Framework.ConsoleEngine.Mappers
             public T GetInstance()
             {
                 if (!this.IsImplemented) throw new InvalidOperationException();
-                return (T) this.mapper.CommandBuilder.Build();
+                return (T)this.mapper.CommandBuilder.Build();
             }
         }
     }

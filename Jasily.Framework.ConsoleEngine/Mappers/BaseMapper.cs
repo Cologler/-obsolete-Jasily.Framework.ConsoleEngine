@@ -6,12 +6,7 @@ using System.Reflection;
 
 namespace Jasily.Framework.ConsoleEngine.Mappers
 {
-    public class BaseMapper
-    {
-        public virtual bool TryMap() => true;
-    }
-
-    public class BaseMapper<T, TAttributeMapper> : BaseMapper
+    public class BaseMapper<T, TAttributeMapper>
         where T : NameAttribute
         where TAttributeMapper : BaseAttributeMapper<T>, new()
     {
@@ -36,7 +31,7 @@ namespace Jasily.Framework.ConsoleEngine.Mappers
         public IEnumerable<string> GetNames()
         {
             yield return this.Name;
-            foreach (var alia in this.Alias) yield return alia.Name;
+            foreach (var alias in this.Alias) yield return alias;
         }
 
         public bool IsMatch(string name)
@@ -45,19 +40,14 @@ namespace Jasily.Framework.ConsoleEngine.Mappers
                 this.AttributeMapper.NameAttribute.IgnoreCase
                     ? StringComparison.OrdinalIgnoreCase
                     : StringComparison.Ordinal) ||
-                this.Alias.Any(z => string.Equals(name, z.Name, z.IgnoreCase
+                this.AttributeMapper.AliasAttribute.Any(z => string.Equals(name, z.Name, z.IgnoreCase
                         ? StringComparison.OrdinalIgnoreCase
                         : StringComparison.Ordinal));
         }
 
-        public override bool TryMap()
-        {
-            if (!this.AttributeMapper.TryMap(this.MapedSource)) return false;
+        public bool TryMap() => this.AttributeMapper.TryMap(this.MapedSource);
 
-            return true;
-        }
-
-        public IReadOnlyList<AliasAttribute> Alias => this.AttributeMapper.AliasAttribute;
+        public IEnumerable<string> Alias => this.AttributeMapper.AliasAttribute.Select(z => z.Name);
 
         public string Desciption => this.AttributeMapper.DesciptionAttribute.Desciption;
     }

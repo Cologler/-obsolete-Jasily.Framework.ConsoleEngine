@@ -1,5 +1,4 @@
 ﻿using Jasily.Framework.ConsoleEngine.Mappers;
-using Jasily.Framework.ConsoleEngine.Parameters;
 using System.Collections.Generic;
 
 namespace Jasily.Framework.ConsoleEngine.Formaters
@@ -21,14 +20,6 @@ namespace Jasily.Framework.ConsoleEngine.Formaters
         {
             var command = commandMapper.Name;
             yield return new FormatedString($"{command}{this.GetIndent()}{commandMapper.Desciption}");
-        }
-
-        public IEnumerable<FormatedString> Format(CommandMapper commandMapper, IParametersFormater formater, ICommandParameterParser parser)
-        {
-            var command = commandMapper.Name;
-            yield return new FormatedString($"{command}{this.GetIndent()}{commandMapper.Desciption}");
-            //var parameters = string.Join(" ", formater.Format(commandMapper, commandMapper.ParameterSetterBuilder.Mappers, parser));
-            //yield return new FormatedString($"{commandMapper.Command} {parameters}");
         }
     }
 }
