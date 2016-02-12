@@ -1,34 +1,34 @@
 using Jasily.Framework.ConsoleEngine.Attributes;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
 
 namespace Jasily.Framework.ConsoleEngine.Mappers
 {
     public class BaseMapper<T, TAttributeMapper>
         where T : NameAttribute
-        where TAttributeMapper : BaseAttributeMapper<T>, new()
+        where TAttributeMapper : BaseAttributeMapper<T>
     {
         protected BaseMapper(Type type)
-            : this(type, type)
         {
-        }
-        protected BaseMapper(MemberInfo source, Type type)
-        {
-            this.MapedSource = source;
             this.MapedType = type;
         }
 
         public Type MapedType { get; }
 
-        public MemberInfo MapedSource { get; }
+        public TAttributeMapper AttributeMapper { get; protected set; }
 
-        public TAttributeMapper AttributeMapper { get; } = new TAttributeMapper();
+        public string Name
+        {
+            get
+            {
+                Debug.Assert(this.AttributeMapper != null);
+                return this.AttributeMapper.Name;
+            }
+        }
 
-        public string Name => this.AttributeMapper.Name;
-
-        public IEnumerable<string> GetNames()
+        public virtual IEnumerable<string> GetNames()
         {
             yield return this.Name;
             foreach (var alias in this.Alias) yield return alias;
@@ -45,7 +45,11 @@ namespace Jasily.Framework.ConsoleEngine.Mappers
                         : StringComparison.Ordinal));
         }
 
-        public bool TryMap() => this.AttributeMapper.TryMap(this.MapedSource);
+        public bool TryMap()
+        {
+            Debug.Assert(this.AttributeMapper != null);
+            return this.AttributeMapper.TryMap();
+        }
 
         public IEnumerable<string> Alias => this.AttributeMapper.AliasAttribute.Select(z => z.Name);
 

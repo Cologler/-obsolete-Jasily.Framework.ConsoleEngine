@@ -61,5 +61,7 @@ namespace Jasily.Framework.ConsoleEngine
                 };
             }
         }
+
+        public static bool IsDefaultParameters(Type type) => type == typeof(Session) || type == typeof(CommandLine);
     }
 }

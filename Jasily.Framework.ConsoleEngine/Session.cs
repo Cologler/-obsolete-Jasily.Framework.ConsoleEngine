@@ -7,7 +7,7 @@ using System.Linq;
 
 namespace Jasily.Framework.ConsoleEngine
 {
-    public class Session : IOutput, IDisposable
+    public sealed class Session : IOutput, IDisposable
     {
         private readonly List<CommandLine> historys = new List<CommandLine>();
 
@@ -59,29 +59,28 @@ namespace Jasily.Framework.ConsoleEngine
 
         private void Execute(CommandMapper mapper, CommandLine command)
         {
-            var obj = mapper.CommandBuilder.Build();
-            var setter = mapper.ParameterSetterBuilder.CreateSetter();
+            var obj = mapper.CommandClassBuilder.Build();
+            var executor = mapper.ExecutorBuilder.CreateExecutor(obj);
             foreach (var kvp in command.Parameters)
             {
-                var r = setter.SetParameter(kvp.Key, obj, kvp.Value, this.Engine.Converters);
+                var r = executor.SetParameter(kvp.Key, kvp.Value, this.Engine.Converters);
                 if (r.HasError)
                 {
                     this.WriteLine(r);
                     return;
                 }
             }
-            var missing = setter.GetMissingParameters().ToArray();
-            if (missing.Length == 0)
-            {
-                this.Execute(obj, command);
-            }
-            else
+            var missing = executor.GetMissingParameters().ToArray();
+            if (missing.Length != 0)
             {
                 this.Engine.GetCommandMember(z => z.MissingParametersFormater)
                     .Format(this.Engine.GetCommandMember(z => z.Output), mapper, missing,
                         this.Engine.GetCommandMember(z => z.CommandParameterParser));
                 this.Help(command);
+                return;
             }
+
+            executor.Execute(this, command);
         }
 
         private void Execute(ICommand command, CommandLine commandLine)

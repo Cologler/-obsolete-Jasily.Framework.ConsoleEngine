@@ -1,25 +1,28 @@
 using Jasily.Framework.ConsoleEngine.Attributes;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Reflection;
 
 namespace Jasily.Framework.ConsoleEngine.Mappers
 {
-    public class BaseAttributeMapper<TNameAttribute> : BaseAttributeMapper
+    public abstract class BaseAttributeMapper<TNameAttribute> : BaseAttributeMapper
         where TNameAttribute : NameAttribute
     {
-        public TNameAttribute NameAttribute { get; private set; }
+        public TNameAttribute NameAttribute { get; protected set; }
 
-        public override string Name => this.NameAttribute.Name;
+        public virtual string Name => this.NameAttribute.Name;
 
-        internal override bool TryMap(MemberInfo source)
+        internal override bool TryMap()
         {
             Debug.Assert(this.NameAttribute == null);
 
-            if (!base.TryMap(source)) return false;
+            return base.TryMap() && this.TryMapName();
+        }
 
-            this.NameAttribute = source.GetCustomAttribute<TNameAttribute>();
+        protected virtual bool TryMapName()
+        {
+            this.NameAttribute = this.GetCustomAttribute<TNameAttribute>();
             if (this.NameAttribute == null) return false;
 
             if (string.IsNullOrWhiteSpace(this.NameAttribute.Name))
@@ -27,24 +30,21 @@ namespace Jasily.Framework.ConsoleEngine.Mappers
                 if (Debugger.IsAttached) Debugger.Break();
                 return false;
             }
-
             return true;
         }
     }
 
     public abstract class BaseAttributeMapper
     {
-        public abstract string Name { get; }
-
         public IReadOnlyList<AliasAttribute> AliasAttribute { get; private set; }
 
         public DesciptionAttribute DesciptionAttribute { get; private set; }
 
-        internal virtual bool TryMap(MemberInfo source)
+        internal virtual bool TryMap()
         {
             Debug.Assert(this.AliasAttribute == null);
 
-            this.AliasAttribute = source.GetCustomAttributes<AliasAttribute>().ToList();
+            this.AliasAttribute = this.GetCustomAttributes<AliasAttribute>().ToList();
             foreach (var attr in this.AliasAttribute)
             {
                 if (string.IsNullOrWhiteSpace(attr.Name))
@@ -54,9 +54,13 @@ namespace Jasily.Framework.ConsoleEngine.Mappers
                 }
             }
 
-            this.DesciptionAttribute = source.GetCustomAttribute<DesciptionAttribute>() ?? DesciptionAttribute.Empty;
+            this.DesciptionAttribute = this.GetCustomAttribute<DesciptionAttribute>() ?? DesciptionAttribute.Empty;
 
             return true;
         }
+
+        protected abstract T GetCustomAttribute<T>() where T : Attribute;
+
+        protected abstract IEnumerable<T> GetCustomAttributes<T>() where T : Attribute;
     }
 }

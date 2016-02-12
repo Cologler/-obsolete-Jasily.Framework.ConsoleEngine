@@ -4,13 +4,13 @@ using System.Linq;
 
 namespace Jasily.Framework.ConsoleEngine.Mappers
 {
-    public class CommandBuilder
+    public class CommandClassBuilder
     {
         private readonly bool isStatic;
         private readonly Func<object> constructor;
         private ICommand instance;
 
-        private CommandBuilder(bool isStatic, Func<object> constructor)
+        private CommandClassBuilder(bool isStatic, Func<object> constructor)
         {
             this.isStatic = isStatic;
             this.constructor = constructor;
@@ -29,15 +29,16 @@ namespace Jasily.Framework.ConsoleEngine.Mappers
             }
         }
 
-        internal static CommandBuilder TryCreate(CommandMapper mapper)
+        internal static CommandClassBuilder TryCreate(CommandSource commandSource)
         {
-            var constructors = mapper.MapedType.GetConstructors().ToArray();
+            var type = commandSource.ClassType;
+            var constructors = type.GetConstructors().ToArray();
             foreach (var constructor in constructors)
             {
                 var parameters = constructor.GetParameters().ToArray();
                 if (parameters.Length == 0)
                 {
-                    return new CommandBuilder(mapper.IsStatic, () => Activator.CreateInstance(mapper.MapedType));
+                    return new CommandClassBuilder(commandSource.IsStatic, () => Activator.CreateInstance(type));
                 }
             }
             return null;

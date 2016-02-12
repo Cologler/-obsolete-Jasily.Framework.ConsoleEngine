@@ -4,7 +4,7 @@ namespace Jasily.Framework.ConsoleEngine.Attributes
 {
     public abstract class NameAttribute : Attribute
     {
-        public string Name { get; }
+        public string Name { get; set; }
 
         protected NameAttribute(string name)
         {

@@ -11,7 +11,9 @@ namespace Jasily.Framework.ConsoleEngine.Mappers
     {
         private readonly JasilyConsoleEngine engine;
         private readonly List<Assembly> registedAssemblys = new List<Assembly>();
-        private readonly Dictionary<Type, CommandMapper> registedTypes = new Dictionary<Type, CommandMapper>();
+        private readonly Dictionary<Type, List<CommandMapper>> registedTypes
+            = new Dictionary<Type, List<CommandMapper>>();
+        private readonly List<CommandMapper> mappedCommands = new List<CommandMapper>();
         private readonly Dictionary<string, List<CommandMapper>> commandMappersMap
             = new Dictionary<string, List<CommandMapper>>();
 
@@ -66,11 +68,14 @@ namespace Jasily.Framework.ConsoleEngine.Mappers
             if (this.registedTypes.ContainsKey(type))
                 return Enumerable.Empty<List<CommandMapper>>();
 
+            var mappers = CommandMapper.TryMap(type, this.engine.Converters).ToList();
+            this.registedTypes.Add(type, mappers);
+
             var changed = new List<List<CommandMapper>>();
-            var mapper = CommandMapper.TryMap(this.engine, type);
-            if (mapper != null)
+            foreach (var mapper in mappers)
             {
-                this.registedTypes.Add(type, mapper);
+                this.mappedCommands.Add(mapper);
+
                 foreach (var lower in mapper.GetNames().Select(z => z.ToLower()))
                 {
                     var col = this.commandMappersMap.GetOrCreateValue(lower);
@@ -78,6 +83,7 @@ namespace Jasily.Framework.ConsoleEngine.Mappers
                     changed.Add(col);
                 }
             }
+
             return changed;
         }
 
@@ -89,7 +95,7 @@ namespace Jasily.Framework.ConsoleEngine.Mappers
             }
         }
 
-        public IEnumerable<CommandMapper> GetCommandMappers() => this.registedTypes.Values;
+        public IEnumerable<CommandMapper> GetCommandMappers() => this.mappedCommands;
 
         internal CommandMapper GetCommand(CommandLine line)
         {

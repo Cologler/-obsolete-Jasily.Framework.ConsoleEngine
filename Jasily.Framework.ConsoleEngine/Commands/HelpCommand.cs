@@ -29,7 +29,7 @@ namespace Jasily.Framework.ConsoleEngine.Commands
                 var ParameterParser = session.Engine.GetCommandMember(z => z.CommandParameterParser);
                 session.WriteLine();
                 session.WriteLine("parameters:");
-                foreach (var formatedString in parameterFormater.Format(mapper, mapper.ParameterSetterBuilder.Mappers, ParameterParser))
+                foreach (var formatedString in parameterFormater.Format(mapper, mapper.ExecutorBuilder.Mappers, ParameterParser))
                 {
                     session.WriteLine("  " + formatedString);
                 }
