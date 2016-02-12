@@ -13,8 +13,9 @@ namespace Jasily.Framework.ConsoleEngine.Formaters
         {
             foreach (var mapper in mappers)
             {
-                var names = string.Join("/", mapper.GetNames());
-                yield return $"{names} {parser.GetInputSytle(mapper.Name)}\t\t\t{mapper.Desciption}";
+                yield return $"{parser.GetInputSytle(mapper.Name)}\t\t\t{mapper.Desciption}";
+                yield return $"  alias: {string.Join("; ", mapper.GetNames())}";
+                yield return "";
             }
         }
 
