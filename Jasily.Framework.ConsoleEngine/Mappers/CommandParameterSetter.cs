@@ -64,9 +64,9 @@ namespace Jasily.Framework.ConsoleEngine.Mappers
 
             public bool IsSeted { get; private set; }
 
-            public bool IsVaild => this.Mapper.Attribute.IsOptional || this.IsSeted;
+            public bool IsVaild => this.Mapper.IsOptional || this.IsSeted;
 
-            public bool IsMissing => !this.Mapper.Attribute.IsOptional && !this.IsSeted;
+            public bool IsMissing => !this.Mapper.IsOptional && !this.IsSeted;
         }
     }
 }

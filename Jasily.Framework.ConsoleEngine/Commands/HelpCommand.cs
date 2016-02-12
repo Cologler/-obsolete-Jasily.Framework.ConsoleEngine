@@ -38,9 +38,13 @@ namespace Jasily.Framework.ConsoleEngine.Commands
 
         private void HelpFor(CommandMapper mapper, Session session, CommandLine line)
         {
-            if (typeof(IHelpCommand).IsAssignableFrom(mapper.MapedType))
+            if (mapper.HelpCommand.IsImplemented)
             {
-                ((IHelpCommand)mapper.CommandBuilder.Build()).Help(session, line);
+                mapper.HelpCommand.GetInstance().Help(session, line);
+            }
+            else if (mapper.DesciptionCommand.IsImplemented)
+            {
+                session.WriteLine("  " + mapper.DesciptionCommand.GetInstance().Desciption);
             }
             else
             {

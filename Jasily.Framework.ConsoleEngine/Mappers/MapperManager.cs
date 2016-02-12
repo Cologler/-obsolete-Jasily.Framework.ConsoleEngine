@@ -85,7 +85,7 @@ namespace Jasily.Framework.ConsoleEngine.Mappers
         {
             foreach (var list in changed.Distinct())
             {
-                list.Sort((x, y) => ((int)x.Attribute.CommandType).CompareTo((int)y.Attribute.CommandType));
+                list.Sort((x, y) => ((int)x.CommandType).CompareTo((int)y.CommandType));
             }
         }
 

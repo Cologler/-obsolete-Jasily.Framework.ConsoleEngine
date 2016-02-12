@@ -10,6 +10,12 @@ namespace Jasily.Framework.ConsoleEngine.Mappers
     {
         private readonly Dictionary<Type, IConverter> converters = new Dictionary<Type, IConverter>();
 
+        public ConvertersMapper()
+        {
+            this.EnumConverter = new EnumConverter();
+            this.NullableConverter = new NullableConverter(this);
+        }
+
         public void Index(Type type)
         {
             foreach (var z in type.GetInterfaces().ToArray())
@@ -33,7 +39,9 @@ namespace Jasily.Framework.ConsoleEngine.Mappers
 
         public IConverter this[Type t] => this.converters.GetValueOrDefault(t);
 
-        public IConverter EnumConverter { get; } = new EnumConverter();
+        public IConverter EnumConverter { get; }
+
+        public IConverter NullableConverter { get; }
 
         public ConverterAgent GetAgent() => new ConverterAgent(this);
     }

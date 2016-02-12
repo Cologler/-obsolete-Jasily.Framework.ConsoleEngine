@@ -19,13 +19,13 @@ namespace Jasily.Framework.ConsoleEngine.Formaters
 
         public IEnumerable<FormatedString> Format(CommandMapper commandMapper)
         {
-            var command = commandMapper.Command;
+            var command = commandMapper.Name;
             yield return new FormatedString($"{command}{this.GetIndent()}{commandMapper.Desciption}");
         }
 
         public IEnumerable<FormatedString> Format(CommandMapper commandMapper, IParametersFormater formater, ICommandParameterParser parser)
         {
-            var command = commandMapper.Command;
+            var command = commandMapper.Name;
             yield return new FormatedString($"{command}{this.GetIndent()}{commandMapper.Desciption}");
             //var parameters = string.Join(" ", formater.Format(commandMapper, commandMapper.ParameterSetterBuilder.Mappers, parser));
             //yield return new FormatedString($"{commandMapper.Command} {parameters}");

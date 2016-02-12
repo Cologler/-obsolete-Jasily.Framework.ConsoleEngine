@@ -39,8 +39,8 @@ namespace Jasily.Framework.ConsoleEngine.Mappers
                         return null;
                     }
                     var setter = new Action<object, object>(property.SetValue);
-                    var parameterMapper = new ParameterMapper(property, property.PropertyType, attr, setter);
-                    if (!parameterMapper.Map()) return null;
+                    var parameterMapper = new ParameterMapper(property, property.PropertyType, setter);
+                    if (!parameterMapper.TryMap()) return null;
 
                     foreach (var parameterName in parameterMapper.GetNames())
                     {
@@ -55,7 +55,7 @@ namespace Jasily.Framework.ConsoleEngine.Mappers
                             dict.Add(parameterName, false);
                         }
                     }
-                    
+
                     builder.parameterMappers.Add(parameterMapper);
                 }
             }

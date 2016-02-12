@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Jasily.Framework.ConsoleEngine
 {
-    public class CommandLine
+    public sealed class CommandLine
     {
         public static CommandLine Empty { get; } = new CommandLine(string.Empty)
         {

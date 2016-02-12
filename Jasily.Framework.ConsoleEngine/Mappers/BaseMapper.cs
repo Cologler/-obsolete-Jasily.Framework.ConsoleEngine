@@ -1,32 +1,37 @@
 using Jasily.Framework.ConsoleEngine.Attributes;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 
 namespace Jasily.Framework.ConsoleEngine.Mappers
 {
-    public class BaseMapper<T> where T : NameAttribute
+    public class BaseMapper
     {
-        protected BaseMapper(Type type, T attr)
-            : this(type, type, attr)
+        public virtual bool TryMap() => true;
+    }
+
+    public class BaseMapper<T, TAttributeMapper> : BaseMapper
+        where T : NameAttribute
+        where TAttributeMapper : BaseAttributeMapper<T>, new()
+    {
+        protected BaseMapper(Type type)
+            : this(type, type)
         {
         }
-        protected BaseMapper(MemberInfo source, Type type, T attr)
+        protected BaseMapper(MemberInfo source, Type type)
         {
             this.MapedSource = source;
             this.MapedType = type;
-            this.Attribute = attr;
         }
 
         public Type MapedType { get; }
 
         public MemberInfo MapedSource { get; }
 
-        public T Attribute { get; }
+        public TAttributeMapper AttributeMapper { get; } = new TAttributeMapper();
 
-        public virtual string Name => this.Attribute.Name;
+        public string Name => this.AttributeMapper.Name;
 
         public IEnumerable<string> GetNames()
         {
@@ -36,32 +41,24 @@ namespace Jasily.Framework.ConsoleEngine.Mappers
 
         public bool IsMatch(string name)
         {
-            var comparison = this.Attribute.IgnoreCase
-                ? StringComparison.OrdinalIgnoreCase
-                : StringComparison.Ordinal;
-            return string.Equals(name, this.Name, comparison) ||
-                this.Alias.Any(z => string.Equals(name, z.Name, comparison));
+            return string.Equals(name, this.AttributeMapper.NameAttribute.Name,
+                this.AttributeMapper.NameAttribute.IgnoreCase
+                    ? StringComparison.OrdinalIgnoreCase
+                    : StringComparison.Ordinal) ||
+                this.Alias.Any(z => string.Equals(name, z.Name, z.IgnoreCase
+                        ? StringComparison.OrdinalIgnoreCase
+                        : StringComparison.Ordinal));
         }
 
-        public virtual bool Map()
+        public override bool TryMap()
         {
-            this.Alias = this.MapedSource.GetCustomAttributes<AliasAttribute>().ToList();
-            foreach (var attr in this.Alias)
-            {
-                if (string.IsNullOrWhiteSpace(attr.Name))
-                {
-                    Debug.WriteLine("AliasAttribute.Name cannot be empty.", nameof(attr.Name));
-                    return false;
-                }
-            }
-
-            this.Desciption = this.MapedSource.GetCustomAttribute<DesciptionAttribute>() ?? DesciptionAttribute.Empty;
+            if (!this.AttributeMapper.TryMap(this.MapedSource)) return false;
 
             return true;
         }
 
-        public IReadOnlyList<AliasAttribute> Alias { get; private set; }
+        public IReadOnlyList<AliasAttribute> Alias => this.AttributeMapper.AliasAttribute;
 
-        public DesciptionAttribute Desciption { get; private set; }
+        public string Desciption => this.AttributeMapper.DesciptionAttribute.Desciption;
     }
 }

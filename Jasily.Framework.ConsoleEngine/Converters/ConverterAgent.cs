@@ -14,7 +14,18 @@ namespace Jasily.Framework.ConsoleEngine.Converters
 
         public bool CanConvert(Type to)
         {
-            return to == typeof(string) || this.ConvertersMapper[to] != null || to.IsEnum;
+            if (to == typeof(string)) return true;
+            if (to.IsEnum) return true;
+            if (this.ConvertersMapper[to] != null) return true;
+            if (to.IsGenericType)
+            {
+                var genericTypeDef = to.GetGenericTypeDefinition();
+                if (genericTypeDef == typeof(Nullable<>))
+                {
+                    return this.CanConvert(to.GetGenericArguments()[0]);
+                }
+            }
+            return false;
         }
 
         public bool Convert(Type to, string input, out object output)
@@ -26,6 +37,19 @@ namespace Jasily.Framework.ConsoleEngine.Converters
             }
 
             var converter = this.ConvertersMapper[to];
+
+            if (converter == null)
+            {
+                if (to.IsGenericType)
+                {
+                    var genericTypeDef = to.GetGenericTypeDefinition();
+                    if (genericTypeDef == typeof(Nullable<>))
+                    {
+                        converter = this.ConvertersMapper.NullableConverter;
+                    }
+                }
+            }
+
             if (converter != null)
             {
                 return converter.Convert(to, input, out output);

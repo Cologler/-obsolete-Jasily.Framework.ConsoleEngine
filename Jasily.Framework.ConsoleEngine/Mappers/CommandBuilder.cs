@@ -37,7 +37,7 @@ namespace Jasily.Framework.ConsoleEngine.Mappers
                 var parameters = constructor.GetParameters().ToArray();
                 if (parameters.Length == 0)
                 {
-                    return new CommandBuilder(mapper.Attribute.IsStatic, () => Activator.CreateInstance(mapper.MapedType));
+                    return new CommandBuilder(mapper.IsStatic, () => Activator.CreateInstance(mapper.MapedType));
                 }
             }
             return null;

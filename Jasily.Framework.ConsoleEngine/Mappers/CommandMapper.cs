@@ -5,16 +5,14 @@ using System.Reflection;
 
 namespace Jasily.Framework.ConsoleEngine.Mappers
 {
-    public class CommandMapper : BaseMapper<CommandAttribute>
+    public sealed class CommandMapper : BaseMapper<CommandAttribute, CommandAttributeMapper>
     {
-        private CommandMapper(Type type, CommandAttribute commandAttribute)
-            : base(type, commandAttribute)
+        private CommandMapper(Type type)
+            : base(type)
         {
+            this.DesciptionCommand = new Interface<IDesciptionCommand>(this);
+            this.HelpCommand = new Interface<IHelpCommand>(this);
         }
-
-        public override string Name => this.Command;
-
-        public string Command { get; private set; }
 
         public CommandBuilder CommandBuilder { get; private set; }
 
@@ -27,14 +25,8 @@ namespace Jasily.Framework.ConsoleEngine.Mappers
             var attr = type.GetCustomAttribute<CommandAttribute>();
             if (attr == null) return null;
 
-            var mapper = new CommandMapper(type, attr);
-            var cmd = attr.Name;
-            if (string.IsNullOrWhiteSpace(cmd))
-            {
-                cmd = type.Name;
-                if (cmd.EndsWith("Command")) cmd = cmd.Substring(0, cmd.Length - "Command".Length);
-            }
-            mapper.Command = cmd;
+            var mapper = new CommandMapper(type);
+            if (!mapper.TryMap()) return null;
 
             mapper.CommandBuilder = CommandBuilder.TryCreate(mapper);
             if (mapper.CommandBuilder == null) return null;
@@ -42,9 +34,34 @@ namespace Jasily.Framework.ConsoleEngine.Mappers
             mapper.ParameterSetterBuilder = CommandParameterSetterBuilder.TryCreate(engine, mapper);
             if (mapper.ParameterSetterBuilder == null) return null;
 
-            if (!mapper.Map()) return null;
-
             return mapper;
+        }
+
+        public bool IsStatic => this.AttributeMapper.NameAttribute.IsStatic;
+
+        public CommandType CommandType => this.AttributeMapper.NameAttribute.CommandType;
+
+        public Interface<IHelpCommand> HelpCommand { get; }
+
+        public Interface<IDesciptionCommand> DesciptionCommand { get; }
+
+        public class Interface<T>
+        {
+            private readonly CommandMapper mapper;
+
+            public Interface(CommandMapper mapper)
+            {
+                this.mapper = mapper;
+                this.IsImplemented = typeof(T).IsAssignableFrom(mapper.MapedType);
+            }
+
+            public bool IsImplemented { get; }
+
+            public T GetInstance()
+            {
+                if (!this.IsImplemented) throw new InvalidOperationException();
+                return (T) this.mapper.CommandBuilder.Build();
+            }
         }
     }
 }
