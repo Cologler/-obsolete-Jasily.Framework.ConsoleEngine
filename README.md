@@ -1,5 +1,7 @@
 # Jasily.Framework.ConsoleEngine
 
+[![Join the chat at https://gitter.im/Cologler/Jasily.Framework.ConsoleEngine](https://badges.gitter.im/Cologler/Jasily.Framework.ConsoleEngine.svg)](https://gitter.im/Cologler/Jasily.Framework.ConsoleEngine?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+
 a engine/frame for console application
 
 # how to use
