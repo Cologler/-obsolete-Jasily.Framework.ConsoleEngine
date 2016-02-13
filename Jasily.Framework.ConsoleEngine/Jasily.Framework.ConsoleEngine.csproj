@@ -51,6 +51,9 @@
     <Compile Include="Commands\IDesciptionCommand.cs" />
     <Compile Include="Commands\IHelpCommand.cs" />
     <Compile Include="CommandType.cs" />
+    <Compile Include="Converters\DecimalConverter.cs" />
+    <Compile Include="Converters\DigitConverter.cs" />
+    <Compile Include="Converters\DoubleConverter.cs" />
     <Compile Include="IApplicationDescription.cs" />
     <Compile Include="Converters\ConverterAgent.cs" />
     <Compile Include="Converters\EnumConverter.cs" />
