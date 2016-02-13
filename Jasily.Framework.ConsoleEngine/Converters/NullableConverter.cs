@@ -21,6 +21,7 @@ namespace Jasily.Framework.ConsoleEngine.Converters
                 return true;
             }
 
+            to = to.GetGenericArguments()[0];
             var converter = this.convertersMapper[to];
             if (converter != null)
             {
