@@ -42,7 +42,5 @@ namespace Jasily.Framework.ConsoleEngine.Mappers
         public IConverter EnumConverter { get; }
 
         public IConverter NullableConverter { get; }
-
-        public ConverterAgent GetAgent() => new ConverterAgent(this);
     }
 }

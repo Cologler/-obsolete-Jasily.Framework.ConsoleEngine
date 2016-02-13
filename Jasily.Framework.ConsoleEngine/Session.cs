@@ -77,7 +77,7 @@ namespace Jasily.Framework.ConsoleEngine
             var executor = mapper.ExecutorBuilder.CreateExecutor(obj);
             foreach (var kvp in command.Parameters)
             {
-                var r = executor.SetParameter(kvp.Key, kvp.Value, this.Engine.Converters);
+                var r = executor.SetParameter(kvp.Key, kvp.Value, this.Engine.MapperManager.GetAgent());
                 if (r.HasError)
                 {
                     this.WriteLine(r);

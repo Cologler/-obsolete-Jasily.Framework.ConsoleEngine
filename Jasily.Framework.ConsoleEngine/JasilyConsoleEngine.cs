@@ -1,5 +1,4 @@
 ﻿using Jasily.Framework.ConsoleEngine.Commands;
-using Jasily.Framework.ConsoleEngine.Converters;
 using Jasily.Framework.ConsoleEngine.Formaters;
 using Jasily.Framework.ConsoleEngine.IO;
 using Jasily.Framework.ConsoleEngine.Mappers;
@@ -23,8 +22,6 @@ namespace Jasily.Framework.ConsoleEngine
         {
             this.MapperManager = new MapperManager(this);
         }
-
-        public ConverterAgent Converters => this.MapperManager.Converters.GetAgent();
 
         public Session StartSession() => new Session(this);
 

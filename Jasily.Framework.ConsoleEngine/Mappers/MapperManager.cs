@@ -16,6 +16,8 @@ namespace Jasily.Framework.ConsoleEngine.Mappers
         private readonly List<CommandMapper> mappedCommands = new List<CommandMapper>();
         private readonly Dictionary<string, List<CommandMapper>> commandMappersMap
             = new Dictionary<string, List<CommandMapper>>();
+        private readonly Dictionary<Type, object> registedDefaultValue
+            = new Dictionary<Type, object>();
 
         public ConvertersMapper Converters { get; } = new ConvertersMapper();
 
@@ -39,6 +41,13 @@ namespace Jasily.Framework.ConsoleEngine.Mappers
             if (converter == null) throw new ArgumentNullException(nameof(converter));
 
             this.Converters.Index(converter);
+        }
+
+        public void RegistDefaultValue<T>(T value)
+        {
+            if (this.registedDefaultValue.ContainsKey(typeof(T))) throw new InvalidOperationException();
+
+            this.registedDefaultValue.Add(typeof(T), value);
         }
 
         public void RegistAssembly(Assembly assembly)
@@ -65,17 +74,15 @@ namespace Jasily.Framework.ConsoleEngine.Mappers
 
         private IEnumerable<List<CommandMapper>> Map(Type type)
         {
-            if (this.registedTypes.ContainsKey(type))
-                return Enumerable.Empty<List<CommandMapper>>();
+            if (this.registedTypes.ContainsKey(type)) return Enumerable.Empty<List<CommandMapper>>();
 
-            var mappers = CommandMapper.TryMap(type, this.engine.Converters).ToList();
+            var mappers = CommandMapper.TryMap(type, this.engine.MapperManager.GetAgent()).ToList();
             this.registedTypes.Add(type, mappers);
+            this.mappedCommands.AddRange(mappers);
 
             var changed = new List<List<CommandMapper>>();
             foreach (var mapper in mappers)
             {
-                this.mappedCommands.Add(mapper);
-
                 foreach (var lower in mapper.GetNames().Select(z => z.ToLower()))
                 {
                     var col = this.commandMappersMap.GetOrCreateValue(lower);
@@ -103,5 +110,7 @@ namespace Jasily.Framework.ConsoleEngine.Mappers
             var list = this.commandMappersMap.GetValueOrDefault(command.ToLower());
             return list?.FirstOrDefault(mapper => mapper.IsMatch(command));
         }
+
+        public ConverterAgent GetAgent() => new ConverterAgent(this.Converters, this.registedDefaultValue);
     }
 }
