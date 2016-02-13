@@ -1,9 +1,10 @@
+using Jasily.Framework.ConsoleEngine.Attributes;
 using System.Collections.Generic;
 using System.Reflection;
 
 namespace Jasily.Framework.ConsoleEngine.Mappers
 {
-    public sealed class PropertyParameterAttributeMapper : ParameterAttributeMapper
+    public sealed class PropertyParameterAttributeMapper : ParameterAttributeMapper<PropertyParameterAttribute>
     {
         private readonly PropertyInfo member;
 

@@ -3,15 +3,14 @@ using System;
 
 namespace Jasily.Framework.ConsoleEngine.Mappers
 {
-    public abstract class ParameterMapper : BaseMapper<ParameterAttribute, ParameterAttributeMapper>,
-        IParameterMapper
+    public abstract class ParameterMapper<TParameterAttribute, TParameterAttributeMapper> :
+        BaseMapper<TParameterAttribute, TParameterAttributeMapper>, IParameterMapper
+        where TParameterAttribute : ParameterAttribute
+        where TParameterAttributeMapper : ParameterAttributeMapper<TParameterAttribute>
     {
-        public Action<object, object> Setter { get; }
-
-        protected ParameterMapper(Type type, Action<object, object> setter)
+        protected ParameterMapper(Type type)
             : base(type)
         {
-            this.Setter = setter;
         }
 
         public abstract bool IsOptional { get; }

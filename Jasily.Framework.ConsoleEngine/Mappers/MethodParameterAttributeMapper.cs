@@ -5,7 +5,7 @@ using System.Reflection;
 
 namespace Jasily.Framework.ConsoleEngine.Mappers
 {
-    public sealed class MethodParameterAttributeMapper : ParameterAttributeMapper
+    public sealed class MethodParameterAttributeMapper : ParameterAttributeMapper<MethodParameterAttribute>
     {
         private readonly ParameterInfo member;
 
@@ -26,8 +26,8 @@ namespace Jasily.Framework.ConsoleEngine.Mappers
             if (JasilyConsoleEngine.IsDefaultParameters(this.member.ParameterType))
                 return true;
 
-            this.NameAttribute = this.GetCustomAttribute<ParameterAttribute>() ??
-                new ParameterAttribute(this.member.Name.ToLower());
+            this.NameAttribute = this.GetCustomAttribute<MethodParameterAttribute>() ??
+                new MethodParameterAttribute(this.member.Name.ToLower());
 
             if (string.IsNullOrWhiteSpace(this.NameAttribute.Name))
             {

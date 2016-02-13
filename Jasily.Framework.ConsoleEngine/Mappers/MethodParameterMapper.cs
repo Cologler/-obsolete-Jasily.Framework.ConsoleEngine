@@ -1,13 +1,15 @@
+using Jasily.Framework.ConsoleEngine.Attributes;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 
 namespace Jasily.Framework.ConsoleEngine.Mappers
 {
-    public sealed class MethodParameterMapper : ParameterMapper
+    public sealed class MethodParameterMapper
+        : ParameterMapper<MethodParameterAttribute, ParameterAttributeMapper<MethodParameterAttribute>>
     {
         public MethodParameterMapper(ParameterInfo source)
-            : base(source.ParameterType, null)
+            : base(source.ParameterType)
         {
             this.AttributeMapper = new MethodParameterAttributeMapper(source);
             this.IsOptional = source.HasDefaultValue;

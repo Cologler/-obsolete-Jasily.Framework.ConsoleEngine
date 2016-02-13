@@ -14,7 +14,7 @@ namespace Jasily.Framework.ConsoleEngine.Executors
         private readonly CommandSourceType commandSourceType;
         private Action<object, object[]> methodParameterSetter;
 
-        private readonly List<ParameterMapper> parameterMappers = new List<ParameterMapper>();
+        private readonly List<IParameterMapper> parameterMappers = new List<IParameterMapper>();
 
         private CommandExecutorBuilder(CommandSourceType commandSourceType)
         {
@@ -46,9 +46,10 @@ namespace Jasily.Framework.ConsoleEngine.Executors
             switch (mapper.CommandSource.SourceType)
             {
                 case CommandSourceType.Class:
+                    var mappers = new List<PropertyParameterMapper>();
                     foreach (var property in mapper.CommandSource.ClassType.GetProperties())
                     {
-                        if (property.GetCustomAttribute<ParameterAttribute>() != null)
+                        if (property.GetCustomAttribute<PropertyParameterAttribute>() != null)
                         {
                             if (!property.CanWrite)
                             {
@@ -81,10 +82,13 @@ namespace Jasily.Framework.ConsoleEngine.Executors
                                     dict.Add(parameterName, false);
                                 }
                             }
-
-                            builder.parameterMappers.Add(parameterMapper);
+                            mappers.Add(parameterMapper);
                         }
                     }
+                    mappers.Sort((x, y) =>
+                        x.AttributeMapper.NameAttribute.Order.CompareTo(
+                        y.AttributeMapper.NameAttribute.Order));
+                    builder.parameterMappers.AddRange(mappers);
                     break;
 
                 case CommandSourceType.Method:
@@ -128,6 +132,6 @@ namespace Jasily.Framework.ConsoleEngine.Executors
             return builder;
         }
 
-        public IEnumerable<ParameterMapper> Mappers => this.parameterMappers;
+        public IEnumerable<IParameterMapper> Mappers => this.parameterMappers;
     }
 }
