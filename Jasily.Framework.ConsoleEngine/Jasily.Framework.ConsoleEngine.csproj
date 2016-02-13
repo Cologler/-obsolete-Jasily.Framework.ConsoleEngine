@@ -86,6 +86,7 @@
     <Compile Include="Mappers\CommandSourceType.cs" />
     <Compile Include="Mappers\ConvertersMapper.cs" />
     <Compile Include="Mappers\BaseMapper.cs" />
+    <Compile Include="Mappers\INameMapper.cs" />
     <Compile Include="Mappers\IParameterMapper.cs" />
     <Compile Include="Mappers\MapperManager.cs" />
     <Compile Include="Executors\MethodCommandExecutor.cs" />

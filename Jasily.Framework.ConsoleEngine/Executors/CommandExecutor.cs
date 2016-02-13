@@ -20,7 +20,7 @@ namespace Jasily.Framework.ConsoleEngine.Executors
     }
 
     public abstract class CommandExecutor<TMapper> : CommandExecutor
-        where TMapper : ParameterMapper
+        where TMapper : IParameterMapper
     {
         private readonly Dictionary<string, ParameterSetterTask> mappers;
         protected readonly ParameterSetterTask[] Tasks;
@@ -48,10 +48,10 @@ namespace Jasily.Framework.ConsoleEngine.Executors
         }
 
         public override IEnumerable<IParameterMapper> GetAllParameters()
-            => this.Tasks.Select(z => z.Mapper);
+            => this.Tasks.Select(z => (IParameterMapper)z.Mapper);
 
         public override IEnumerable<IParameterMapper> GetMissingParameters()
-            => this.Tasks.Where(z => z.IsMissing).Select(z => z.Mapper);
+            => this.Tasks.Where(z => z.IsMissing).Select(z => (IParameterMapper)z.Mapper);
 
         protected class ParameterSetterTask
         {
