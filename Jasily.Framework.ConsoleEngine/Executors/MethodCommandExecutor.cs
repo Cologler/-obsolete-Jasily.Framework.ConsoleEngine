@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Jasily.Framework.ConsoleEngine.Executors
 {
-    public sealed class MethodCommandExecutor : CommandExecutor<MethodParameterMapper>
+    internal sealed class MethodCommandExecutor : CommandExecutor<MethodParameterMapper>
     {
         private readonly Action<object, object[]> methodParameterSetter;
 

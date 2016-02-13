@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace Jasily.Framework.ConsoleEngine.Executors
 {
-    public sealed class ClassCommandExecutor : CommandExecutor<PropertyParameterMapper>
+    internal sealed class ClassCommandExecutor : CommandExecutor<PropertyParameterMapper>
     {
         internal ClassCommandExecutor(object obj, IEnumerable<PropertyParameterMapper> mappers)
             : base(obj, mappers)
