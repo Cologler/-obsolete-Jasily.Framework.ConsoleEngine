@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace Jasily.Framework.ConsoleEngine.Mappers
 {
-    public class BaseMapper<T, TAttributeMapper>
+    public class BaseMapper<T, TAttributeMapper> : INameMapper
         where T : NameAttribute
         where TAttributeMapper : BaseAttributeMapper<T>
     {

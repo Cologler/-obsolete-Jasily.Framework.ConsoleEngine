@@ -7,10 +7,10 @@ namespace Jasily.Framework.ConsoleEngine.Formaters
 {
     public interface IParametersFormater
     {
-        IEnumerable<FormatedString> Format(CommandMapper commandMapper, IEnumerable<ParameterMapper> mappers,
+        IEnumerable<FormatedString> Format(CommandMapper commandMapper, IEnumerable<IParameterMapper> mappers,
             ICommandParameterParser parser);
 
-        void Format(IOutput output, CommandMapper commandMapper, IEnumerable<ParameterMapper> mappers,
+        void Format(IOutput output, CommandMapper commandMapper, IEnumerable<IParameterMapper> mappers,
             ICommandParameterParser parser);
     }
 }

@@ -31,7 +31,7 @@ namespace Jasily.Framework.ConsoleEngine.Executors
             }
         }
 
-        public override IEnumerable<ParameterMapper> GetMissingParameters()
+        public override IEnumerable<IParameterMapper> GetMissingParameters()
             => this.Tasks.Where(z => z.IsMissing && !JasilyConsoleEngine.IsDefaultParameters(z.Mapper.MapedType))
                    .Select(z => z.Mapper);
 

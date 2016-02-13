@@ -75,7 +75,7 @@
     <Compile Include="IO\IOutput.cs" />
     <Compile Include="IO\NoneOutput.cs" />
     <Compile Include="JasilyConsoleEngine.cs" />
-    <Compile Include="Attributes\CommandParameterAttribute.cs" />
+    <Compile Include="Attributes\ParameterAttribute.cs" />
     <Compile Include="Attributes\CommandAttribute.cs" />
     <Compile Include="CommandBlock.cs" />
     <Compile Include="CommandBlockParser.cs" />
@@ -86,6 +86,7 @@
     <Compile Include="Mappers\CommandSourceType.cs" />
     <Compile Include="Mappers\ConvertersMapper.cs" />
     <Compile Include="Mappers\BaseMapper.cs" />
+    <Compile Include="Mappers\IParameterMapper.cs" />
     <Compile Include="Mappers\MapperManager.cs" />
     <Compile Include="Executors\MethodCommandExecutor.cs" />
     <Compile Include="Mappers\MethodParameterAttributeMapper.cs" />

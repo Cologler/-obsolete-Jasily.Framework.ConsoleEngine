@@ -3,7 +3,8 @@ using System;
 
 namespace Jasily.Framework.ConsoleEngine.Mappers
 {
-    public abstract class ParameterMapper : BaseMapper<ParameterAttribute, ParameterAttributeMapper>
+    public abstract class ParameterMapper : BaseMapper<ParameterAttribute, ParameterAttributeMapper>,
+        IParameterMapper
     {
         public Action<object, object> Setter { get; }
 

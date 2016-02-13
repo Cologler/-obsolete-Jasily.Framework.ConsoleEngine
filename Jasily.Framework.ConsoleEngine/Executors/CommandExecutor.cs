@@ -12,9 +12,9 @@ namespace Jasily.Framework.ConsoleEngine.Executors
     {
         public abstract OperationResult SetParameter(string parameterName, string value, ConverterAgent converters);
 
-        public abstract IEnumerable<ParameterMapper> GetAllParameters();
+        public abstract IEnumerable<IParameterMapper> GetAllParameters();
 
-        public abstract IEnumerable<ParameterMapper> GetMissingParameters();
+        public abstract IEnumerable<IParameterMapper> GetMissingParameters();
 
         public abstract void Execute(Session session, CommandLine line);
     }
@@ -47,10 +47,10 @@ namespace Jasily.Framework.ConsoleEngine.Executors
             return task.PrevSetValue(value, converters);
         }
 
-        public override IEnumerable<ParameterMapper> GetAllParameters()
+        public override IEnumerable<IParameterMapper> GetAllParameters()
             => this.Tasks.Select(z => z.Mapper);
 
-        public override IEnumerable<ParameterMapper> GetMissingParameters()
+        public override IEnumerable<IParameterMapper> GetMissingParameters()
             => this.Tasks.Where(z => z.IsMissing).Select(z => z.Mapper);
 
         protected class ParameterSetterTask
