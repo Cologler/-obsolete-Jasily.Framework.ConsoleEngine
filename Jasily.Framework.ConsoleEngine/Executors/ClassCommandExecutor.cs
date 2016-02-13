@@ -16,7 +16,7 @@ namespace Jasily.Framework.ConsoleEngine.Executors
         {
             if (this.IsAllVaild())
             {
-                foreach (var task in this.Tasks)
+                foreach (var task in this.Tasks.Where(z => z.IsSeted))
                 {
                     task.Mapper.Setter(this.Obj, task.Value);
                 }
