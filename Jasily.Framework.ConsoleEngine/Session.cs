@@ -20,6 +20,20 @@ namespace Jasily.Framework.ConsoleEngine
 
         public Dictionary<string, object> State { get; } = new Dictionary<string, object>();
 
+        public IApplicationDescription Description { get; set; }
+
+        public void ShowDescription()
+        {
+            var desc = this.Description;
+            if (desc != null)
+            {
+                this.WriteLine($"{desc.ApplicationName} {desc.Version}");
+                this.WriteLine(desc.Copyright);
+                this.WriteLine();
+                this.WriteLine(desc.Description);
+            }
+        }
+
         public void Help()
             => this.Execute(this.Engine.GetCommandMember(z => z.Helper), CommandLine.Empty);
 
