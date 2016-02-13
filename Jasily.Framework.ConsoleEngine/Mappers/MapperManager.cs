@@ -24,6 +24,7 @@ namespace Jasily.Framework.ConsoleEngine.Mappers
         public MapperManager(JasilyConsoleEngine engine)
         {
             this.engine = engine;
+            this.RegistConverter(new BooleanConverter());
             this.RegistConverter(new Int32Converter());
             this.RegistConverter(new DoubleConverter());
             this.RegistConverter(new DecimalConverter());

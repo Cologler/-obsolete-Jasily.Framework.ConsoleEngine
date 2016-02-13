@@ -1,10 +1,10 @@
-using System;
 using Jasily.Framework.ConsoleEngine.Formaters;
 using Jasily.Framework.ConsoleEngine.Mappers;
+using System;
 
 namespace Jasily.Framework.ConsoleEngine.Converters
 {
-    public class NullableConverter : IConverter
+    public sealed class NullableConverter : IConverter
     {
         private readonly ConvertersMapper convertersMapper;
 

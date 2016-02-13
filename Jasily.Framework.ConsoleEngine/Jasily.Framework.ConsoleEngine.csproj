@@ -46,11 +46,11 @@
     <Compile Include="Attributes\NameAttribute.cs" />
     <Compile Include="Attributes\PropertyParameterAttribute.cs" />
     <Compile Include="Attributes\StaticAttribute.cs" />
-    <Compile Include="Attributes\SwitchParameterAttribute.cs" />
     <Compile Include="CommandLine.cs" />
     <Compile Include="Commands\IDesciptionCommand.cs" />
     <Compile Include="Commands\IHelpCommand.cs" />
     <Compile Include="CommandType.cs" />
+    <Compile Include="Converters\BooleanConverter.cs" />
     <Compile Include="Converters\DecimalConverter.cs" />
     <Compile Include="Converters\DigitConverter.cs" />
     <Compile Include="Converters\DoubleConverter.cs" />
