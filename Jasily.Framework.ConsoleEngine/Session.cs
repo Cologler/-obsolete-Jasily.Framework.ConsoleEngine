@@ -81,17 +81,22 @@ namespace Jasily.Framework.ConsoleEngine
                 this.WriteLine(r);
                 return;
             }
-            var missing = executor.GetMissingParameters().ToArray();
-            if (missing.Length != 0)
-            {
-                this.Engine.GetCommandMember(z => z.MissingParametersFormater)
-                    .Format(this.Engine.GetCommandMember(z => z.Output), mapper, missing,
-                        this.Engine.GetCommandMember(z => z.CommandParameterParser));
-                this.Help(command);
-                return;
-            }
 
-            executor.Execute(this, command);
+            if (executor.IsVaildCommand())
+            {
+                executor.Execute(this, command);
+            }
+            else
+            {
+                var missing = executor.GetMissingParameters().ToArray();
+                if (missing.Length != 0)
+                {
+                    this.Engine.GetCommandMember(z => z.MissingParametersFormater)
+                        .Format(this.Engine.GetCommandMember(z => z.Output), mapper, missing,
+                            this.Engine.GetCommandMember(z => z.CommandParameterParser));
+                    this.Help(command);
+                }
+            }
         }
 
         private void Execute(ICommand command, CommandLine commandLine)

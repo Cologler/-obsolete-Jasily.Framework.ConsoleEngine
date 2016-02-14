@@ -43,6 +43,7 @@
     <Compile Include="Attributes\AliasAttribute.cs" />
     <Compile Include="Attributes\DesciptionAttribute.cs" />
     <Compile Include="Attributes\MethodParameterAttribute.cs" />
+    <Compile Include="Attributes\MethodParameterGroupingAttribute.cs" />
     <Compile Include="Attributes\NameAttribute.cs" />
     <Compile Include="Attributes\PropertyParameterAttribute.cs" />
     <Compile Include="Attributes\StaticAttribute.cs" />

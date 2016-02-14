@@ -5,7 +5,7 @@ using System.Reflection;
 namespace Jasily.Framework.ConsoleEngine.Mappers
 {
     public sealed class PropertyParameterMapper
-        : ParameterMapper<PropertyParameterAttribute, ParameterAttributeMapper<PropertyParameterAttribute>>
+        : ParameterMapper<PropertyParameterAttribute, PropertyParameterAttributeMapper>
     {
         public Action<object, object> Setter { get; }
 

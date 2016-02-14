@@ -17,6 +17,8 @@ namespace Jasily.Framework.ConsoleEngine.Executors
 
         public abstract IEnumerable<IParameterMapper> GetMissingParameters();
 
+        public abstract bool IsVaildCommand();
+
         public abstract void Execute(Session session, CommandLine line);
     }
 
@@ -25,14 +27,14 @@ namespace Jasily.Framework.ConsoleEngine.Executors
     {
         private readonly Dictionary<string, List<ParameterSetter<TMapper>>> settersMap
             = new Dictionary<string, List<ParameterSetter<TMapper>>>();
-        protected readonly ParameterSetter<TMapper>[] Tasks;
+        protected readonly ParameterSetter<TMapper>[] Setters;
         protected readonly object Obj;
 
         protected CommandExecutor(object obj, IEnumerable<TMapper> mappers)
         {
             this.Obj = obj;
-            this.Tasks = mappers.Select(z => new ParameterSetter<TMapper>(z)).ToArray();
-            foreach (var task in this.Tasks)
+            this.Setters = mappers.Select(z => new ParameterSetter<TMapper>(z)).ToArray();
+            foreach (var task in this.Setters)
             {
                 foreach (var name in task.Mapper.GetNames())
                 {
@@ -45,21 +47,22 @@ namespace Jasily.Framework.ConsoleEngine.Executors
             ICommandParameterParser parameterParser,
             ConverterAgent converters)
         {
-            var setters = this.settersMap.Values.ToArray();
-            foreach (var kvp in parameterParser.Parse(commandLine, setters.SelectMany(z => z)))
+            foreach (var kvp in parameterParser.Parse(commandLine, this.Setters))
             {
-                var setter = this.settersMap.GetValueOrDefault(kvp.Key);
-                var result = setter?.FirstOrDefault(z => z.Mapper.IsMatch(kvp.Key))?.PrevSetValue(kvp.Value, converters);
+                var setters = this.settersMap.GetValueOrDefault(kvp.Key);
+                var result = setters?
+                    .FirstOrDefault(z => z.Mapper.IsMatch(kvp.Key))?
+                    .PrevSetValue(kvp.Value, converters);
                 if (result?.HasError == true) return result.Value;
             }
             return null;
         }
 
         public override IEnumerable<IParameterMapper> GetAllParameters()
-            => this.Tasks.Select(z => (IParameterMapper)z.Mapper);
+            => this.Setters.Select(z => (IParameterMapper)z.Mapper);
 
         public override IEnumerable<IParameterMapper> GetMissingParameters()
-            => this.Tasks.Where(z => z.IsMissing).Select(z => (IParameterMapper)z.Mapper);
+            => this.Setters.Where(z => z.IsMissing).Select(z => (IParameterMapper)z.Mapper);
 
 
     }
