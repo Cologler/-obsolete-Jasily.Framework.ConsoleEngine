@@ -39,7 +39,19 @@ namespace Jasily.Framework.ConsoleEngine.Executors
                     task.Mapper.Setter(this.Obj, task.Value);
                 }
 
-                ((ICommand)this.Obj).Execute(session, line);
+                var groupingCommand = this.Obj as IGroupingCommand;
+                if (groupingCommand != null)
+                {
+                    var worked = this.settersMap
+                        .Where(z => z.Value.SelectMany(x => x.Value).All(c => c.IsVaild))
+                        .Select(z => z.Key)
+                        .ToArray();
+                    groupingCommand.Execute(session, line, worked);
+                }
+                else
+                {
+                    ((ICommand)this.Obj).Execute(session, line);
+                }
             }
         }
     }
