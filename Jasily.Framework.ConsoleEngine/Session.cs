@@ -44,9 +44,7 @@ namespace Jasily.Framework.ConsoleEngine
         {
             var commandLine = new CommandLine(command);
             this.historys.Add(commandLine);
-            commandLine.Parse(
-                this.Engine.GetCommandMember(z => z.CommandParser),
-                this.Engine.GetCommandMember(z => z.CommandParameterParser));
+            commandLine.Parse(this.Engine.GetCommandMember(z => z.CommandParser));
 
             if (commandLine.CommandBlock == null)
             {
@@ -75,14 +73,13 @@ namespace Jasily.Framework.ConsoleEngine
         {
             var obj = mapper.CommandClassBuilder.Build();
             var executor = mapper.ExecutorBuilder.CreateExecutor(obj);
-            foreach (var kvp in command.Parameters)
+            var r = executor.SetCommandLine(command,
+                this.Engine.GetCommandMember(z => z.CommandParameterParser),
+                this.Engine.MapperManager.GetAgent());
+            if (r.HasError)
             {
-                var r = executor.SetParameter(kvp.Key, kvp.Value, this.Engine.MapperManager.GetAgent());
-                if (r.HasError)
-                {
-                    this.WriteLine(r);
-                    return;
-                }
+                this.WriteLine(r);
+                return;
             }
             var missing = executor.GetMissingParameters().ToArray();
             if (missing.Length != 0)

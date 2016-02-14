@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Jasily.Framework.ConsoleEngine.Executors;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -25,13 +26,15 @@ namespace Jasily.Framework.ConsoleEngine.Parameters
             else return $"none parameter style";
         }
 
-        public IEnumerable<KeyValuePair<string, string>> Parse(IEnumerable<CommandBlock> blocks)
+        public IEnumerable<KeyValuePair<string, string>> Parse(
+            CommandLine commandLine, IEnumerable<IParameterSetter> parameterSetters)
         {
             var comparison = this.IgnoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
             var headers = ParameterHeader.Parse(this.Style).ToArray();
             var spliters = ParameterSpliter.Parse(this.SpliterStyle).ToArray();
 
-            foreach (var block in blocks)
+            var setters = parameterSetters as IParameterSetter[] ?? parameterSetters.ToArray();
+            foreach (var block in commandLine.Blocks)
             {
                 foreach (var header in headers)
                 {
@@ -48,17 +51,26 @@ namespace Jasily.Framework.ConsoleEngine.Parameters
                                 break;
                             }
                         }
-                        if (index < 0)
+
+                        var parsedKey = index < 0
+                            ? block.OriginText.Substring(header.Header.Length)
+                            : block.OriginText.Substring(header.Header.Length, index - header.Header.Length);
+
+                        var setter = setters.FirstOrDefault(z => z.Mapper.IsMatch(parsedKey));
+                        if (setter != null)
                         {
-                            yield return new KeyValuePair<string, string>(
-                                block.OriginText.Substring(header.Header.Length),
-                                string.Empty);
-                        }
-                        else
-                        {
-                            yield return new KeyValuePair<string, string>(
-                                block.OriginText.Substring(header.Header.Length, index - header.Header.Length),
-                                block.OriginText.Substring(index + spliterLength));
+                            if (index < 0)
+                            {
+                                yield return new KeyValuePair<string, string>(
+                                    parsedKey,
+                                    string.Empty);
+                            }
+                            else
+                            {
+                                yield return new KeyValuePair<string, string>(
+                                    parsedKey,
+                                    block.OriginText.Substring(index + spliterLength));
+                            }
                         }
                         break;
                     }
