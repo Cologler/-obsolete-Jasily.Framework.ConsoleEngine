@@ -7,16 +7,13 @@ namespace Jasily.Framework.ConsoleEngine.Parameters
 {
     public class CommandParameterParser : ICommandParameterParser
     {
-        public bool IgnoreCase { get; set; } = true;
-
-        public string Spliter { get; set; } = ":";
-
         public ParameterStyle Style { get; set; } = ParameterStyle.DoubleBar | ParameterStyle.Bar |
                                                     ParameterStyle.Backslash | ParameterStyle.Slash;
 
         public ParameterStyle DisplayStyle { get; set; } = ParameterStyle.Bar;
 
-        public ParameterSpliterStyle SpliterStyle { get; set; } = ParameterSpliterStyle.Colon;
+        public ParameterSpliterStyle SpliterStyle { get; set; }
+            = ParameterSpliterStyle.Colon | ParameterSpliterStyle.EqualsSign | ParameterSpliterStyle.Spaces;
 
         public string GetInputSytle(string key)
         {
@@ -29,50 +26,70 @@ namespace Jasily.Framework.ConsoleEngine.Parameters
         public IEnumerable<KeyValuePair<string, string>> Parse(
             CommandLine commandLine, IEnumerable<IParameterSetter> parameterSetters)
         {
-            var comparison = this.IgnoreCase ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
             var headers = ParameterHeader.Parse(this.Style).ToArray();
             var spliters = ParameterSpliter.Parse(this.SpliterStyle).ToArray();
 
             var setters = parameterSetters as IParameterSetter[] ?? parameterSetters.ToArray();
-            foreach (var block in commandLine.Blocks)
+            using (var itor = commandLine.Blocks.GetEnumerator())
             {
-                foreach (var header in headers)
+                while (itor.MoveNext())
                 {
-                    if (block.OriginText.StartsWith(header.Header))
+                    var block = itor.Current;
+
+                    foreach (var header in headers)
                     {
-                        var spliterLength = 1;
-                        var index = -1;
-                        foreach (var spliter in spliters)
-                        {
-                            index = block.OriginText.IndexOf(spliter.Spliter, header.Header.Length, comparison);
-                            if (index >= 0)
-                            {
-                                spliterLength = spliter.Spliter.Length;
-                                break;
-                            }
-                        }
+                        var isParsed = false;
 
-                        var parsedKey = index < 0
-                            ? block.OriginText.Substring(header.Header.Length)
-                            : block.OriginText.Substring(header.Header.Length, index - header.Header.Length);
-
-                        var setter = setters.FirstOrDefault(z => z.Mapper.IsMatch(parsedKey));
-                        if (setter != null)
+                        if (block.OriginText.StartsWith(header.Header))
                         {
-                            if (index < 0)
+                            foreach (var spliter in spliters)
                             {
-                                yield return new KeyValuePair<string, string>(
-                                    parsedKey,
-                                    string.Empty);
+                                var index = spliter.Style == ParameterSpliterStyle.Spaces
+                                    ? -1
+                                    : block.OriginText.IndexOf(spliter.Spliter, header.Header.Length, StringComparison.Ordinal);
+
+                                var parsedKey = index < 0
+                                    ? block.OriginText.Substring(header.Header.Length)
+                                    : block.OriginText.Substring(header.Header.Length, index - header.Header.Length);
+
+                                var setter = setters.FirstOrDefault(z => z.Mapper.IsMatch(parsedKey));
+                                if (setter != null)
+                                {
+                                    if (spliter.Style != ParameterSpliterStyle.Spaces)
+                                    {
+                                        if (index < 0)
+                                        {
+                                            yield return new KeyValuePair<string, string>(
+                                                parsedKey,
+                                                string.Empty);
+                                        }
+                                        else
+                                        {
+                                            yield return new KeyValuePair<string, string>(
+                                                parsedKey,
+                                                block.OriginText.Substring(index + spliter.Spliter.Length));
+                                        }
+
+                                        isParsed = true;
+                                        break;
+                                    }
+                                    else
+                                    {
+                                        if (itor.MoveNext())
+                                        {
+                                            yield return new KeyValuePair<string, string>(
+                                                parsedKey,
+                                                itor.Current.OriginText);
+
+                                            isParsed = true;
+                                            break;
+                                        }
+                                    }
+                                }
                             }
-                            else
-                            {
-                                yield return new KeyValuePair<string, string>(
-                                    parsedKey,
-                                    block.OriginText.Substring(index + spliterLength));
-                            }
+
+                            if (isParsed) break;
                         }
-                        break;
                     }
                 }
             }
@@ -102,21 +119,24 @@ namespace Jasily.Framework.ConsoleEngine.Parameters
 
         private struct ParameterSpliter
         {
+            public ParameterSpliterStyle Style { get; }
+
             public string Spliter { get; }
 
-            private ParameterSpliter(string spliter)
+            private ParameterSpliter(ParameterSpliterStyle style, string spliter)
             {
+                this.Style = style;
                 this.Spliter = spliter;
             }
 
             public static IEnumerable<ParameterSpliter> Parse(ParameterSpliterStyle style)
             {
                 if ((style & ParameterSpliterStyle.Spaces) == ParameterSpliterStyle.Spaces)
-                    yield return new ParameterSpliter(" ");
+                    yield return new ParameterSpliter(ParameterSpliterStyle.Spaces, " ");
                 if ((style & ParameterSpliterStyle.Colon) == ParameterSpliterStyle.Colon)
-                    yield return new ParameterSpliter(":");
+                    yield return new ParameterSpliter(ParameterSpliterStyle.Colon, ":");
                 if ((style & ParameterSpliterStyle.EqualsSign) == ParameterSpliterStyle.EqualsSign)
-                    yield return new ParameterSpliter("=");
+                    yield return new ParameterSpliter(ParameterSpliterStyle.EqualsSign, "=");
             }
         }
     }

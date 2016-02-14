@@ -10,7 +10,6 @@ namespace Jasily.Framework.ConsoleEngine.Executors
     {
         private readonly Dictionary<int, Dictionary<string, List<ParameterSetter<PropertyParameterMapper>>>> settersMap
                = new Dictionary<int, Dictionary<string, List<ParameterSetter<PropertyParameterMapper>>>>();
-        private bool isSubCommand;
 
         internal ClassCommandExecutor(object obj, IEnumerable<PropertyParameterMapper> mappers)
             : base(obj, mappers)
