@@ -94,7 +94,51 @@ public void Test() } // work fine
 
 it will be auto fill on execute if type match.
 
+#### sub command
+
+**only method can be sub command.**
+
+it like this:
+
+```cs
+[Command("list")] // we use class [Command] to index it.
+public class ListCommand // be not need ICommand if class is not a Command
+{
+    [Command("feed")]
+    [SubCommand]
+    public void Feed(Session session, CommandLine line)
+    {
+        
+    }
+}
+```
+
+so we can input `list feed -xxxx` to call it.
+
 ## parameter
+
+### parameter parse
+
+there are a `CommandParameterParser` in `namespace Jasily.Framework.ConsoleEngine.Parameters`, it is default parameter parser.
+
+you can write your own parameter parser implement `ICommandParameterParser` and set to `engine.CustomMembers.CommandParameterParser`.
+
+build-in class `CommandParameterParser` was supported this parameter pattern:
+
+start with:
+
+* `--`
+* `-`
+* `/`
+* `\`
+
+and split parameter key & parameter value using:
+
+* `:`
+* `=`
+* ` ` 
+
+you can set `CommandParameterParser.Style` and `CommandParameterParser.SpliterStyle` to change it.
 
 ### parameter convert
 
@@ -114,6 +158,48 @@ engine.MapperManager.RegistConverter(new BooleanConverter());
 ```
 
 * method command will ignore Type `Session` and `CommandLine`, they will auto fill.
+
+### parameter grouping
+
+**only class property parameter can group**
+
+e.g. for auth, user & pwd was required (as group 0), or token was required (as group 1):
+
+``` cs
+[Command("auth")]
+public sealed class AuthCommand : IGroupingCommand
+{
+    [PropertyParameter("user")]
+    [MethodParameterGrouping(0)]
+    public string UserName { get; set; }
+
+    [PropertyParameter("pwd")]
+    [MethodParameterGrouping(0)]
+    public string Password { get; set; }
+
+    [PropertyParameter("token")]
+    [MethodParameterGrouping(1)]
+    public string Token { get; set; }
+
+    public void Execute(Session session, CommandLine line, int[] workedGroupId)
+    {
+        // ...
+    }
+
+    public void Execute(Session session, CommandLine line)
+    {
+        // ...
+    }
+}
+```
+
+when (`user` & `pwd`) was seted, or (`token`) was seted, command will be call.
+
+if class was implement interface `IGroupingCommand : ICommand`, then enter point will become to `IGroupingCommand.Execute(Session, CommandLine, int[])`, so engine will call `IGroupingCommand.Execute(Session, CommandLine, int[])` only.
+
+if property don't contain `[MethodParameterGrouping]`, it will auto put into group 0.
+
+*`[MethodParameterGrouping]` was allow multiple.*
 
 ## alias & desciption
 
