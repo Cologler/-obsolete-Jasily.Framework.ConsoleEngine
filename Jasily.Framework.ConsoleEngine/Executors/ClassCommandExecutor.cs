@@ -27,8 +27,8 @@ namespace Jasily.Framework.ConsoleEngine.Executors
             }
         }
 
-        public override bool IsVaildCommand()
-            => this.settersMap.Any(z => z.Value.SelectMany(x => x.Value).All(c => c.IsVaild));
+        public override bool IsVaildCommand() => this.settersMap.Count == 0 ||
+            this.settersMap.Any(z => z.Value.SelectMany(x => x.Value).All(c => c.IsVaild));
 
         public override void Execute(Session session, CommandLine line)
         {
