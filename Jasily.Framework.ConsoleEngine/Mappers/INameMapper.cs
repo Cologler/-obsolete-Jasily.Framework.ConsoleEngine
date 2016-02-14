@@ -12,7 +12,5 @@ namespace Jasily.Framework.ConsoleEngine.Mappers
         string Desciption { get; }
 
         IEnumerable<string> GetNames();
-
-        bool IsMatch(string name);
     }
 }

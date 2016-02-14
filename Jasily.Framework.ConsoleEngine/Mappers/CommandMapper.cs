@@ -1,9 +1,12 @@
 ﻿using Jasily.Framework.ConsoleEngine.Attributes;
 using Jasily.Framework.ConsoleEngine.Commands;
 using Jasily.Framework.ConsoleEngine.Converters;
+using Jasily.Framework.ConsoleEngine.Exceptions;
 using Jasily.Framework.ConsoleEngine.Executors;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Linq;
 using System.Reflection;
 
 namespace Jasily.Framework.ConsoleEngine.Mappers
@@ -40,6 +43,7 @@ namespace Jasily.Framework.ConsoleEngine.Mappers
             if (type.IsAbstract && type.IsSealed) yield break; // ignore static class
 
             CommandClassBuilder classBuilder = null;
+            CommandAttributeMapper classAttributeMapper = null;
 
             if (type.GetCustomAttribute<CommandAttribute>() != null && typeof(ICommand).IsAssignableFrom(type))
             {
@@ -52,6 +56,7 @@ namespace Jasily.Framework.ConsoleEngine.Mappers
                     if (mapper.CommandClassBuilder != null && mapper.ExecutorBuilder != null)
                     {
                         yield return mapper;
+                        classAttributeMapper = mapper.AttributeMapper;
                     }
                 }
             }
@@ -68,6 +73,26 @@ namespace Jasily.Framework.ConsoleEngine.Mappers
                         mapper.ExecutorBuilder = CommandExecutorBuilder.TryCreate(mapper, converter);
                         if (mapper.CommandClassBuilder != null && mapper.ExecutorBuilder != null)
                         {
+                            if (mapper.AttributeMapper.IsSubCommand)
+                            {
+                                if (classAttributeMapper == null)
+                                {
+                                    classAttributeMapper = new CommandAttributeMapper(new ClassCommandSource(type));
+                                    if (!classAttributeMapper.TryMap())
+                                    {
+                                        if (classAttributeMapper.NameAttribute == null)
+                                        {
+                                            if (Debugger.IsAttached)
+                                            {
+                                                const string msg = "if class contain sub command, it should contain " + nameof(CommandAttribute);
+                                                throw new MapException(type, msg);
+                                            }
+                                        }
+                                        yield break;
+                                    }
+                                }
+                                mapper.ParentAttributeMapper = classAttributeMapper;
+                            }
                             yield return mapper;
                         }
                     }
@@ -104,6 +129,55 @@ namespace Jasily.Framework.ConsoleEngine.Mappers
             {
                 if (!this.IsImplemented) throw new InvalidOperationException();
                 return (T)this.mapper.CommandClassBuilder.Build();
+            }
+        }
+
+        public CommandAttributeMapper ParentAttributeMapper { get; private set; }
+
+        public override string Name
+        {
+            get
+            {
+                Debug.Assert(!this.AttributeMapper.IsSubCommand || this.ParentAttributeMapper != null);
+                return this.AttributeMapper.IsSubCommand
+                    ? this.ParentAttributeMapper.Name
+                    : base.Name;
+            }
+        }
+
+        public override IEnumerable<string> GetNames()
+        {
+            Debug.Assert(!this.AttributeMapper.IsSubCommand || this.ParentAttributeMapper != null);
+
+            var attributeMapper = this.AttributeMapper.IsSubCommand
+                ? this.ParentAttributeMapper
+                : this.AttributeMapper;
+
+            yield return attributeMapper.Name;
+            foreach (var alias in attributeMapper.Alias) yield return alias;
+        }
+
+        public string Command
+        {
+            get
+            {
+                Debug.Assert(!this.AttributeMapper.IsSubCommand || this.ParentAttributeMapper != null);
+                return this.AttributeMapper.IsSubCommand
+                    ? $"{this.ParentAttributeMapper.Name} {base.Name}"
+                    : base.Name;
+            }
+        }
+
+        public bool IsMatch(CommandLine commandLine)
+        {
+            if (this.AttributeMapper.IsSubCommand)
+            {
+                var secondBlock = commandLine.Blocks.FirstOrDefault();
+                return secondBlock != null && this.IsMatch(secondBlock.OriginText);
+            }
+            else
+            {
+                return this.IsMatch(commandLine.CommandBlock.OriginText);
             }
         }
     }

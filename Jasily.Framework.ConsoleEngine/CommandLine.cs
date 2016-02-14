@@ -11,7 +11,7 @@ namespace Jasily.Framework.ConsoleEngine
         };
 
         private readonly string originLine;
-        private CommandBlock[] blocks;
+        private CommandBlock[] blocks = new CommandBlock[0];
 
         public CommandLine(string originLine)
         {

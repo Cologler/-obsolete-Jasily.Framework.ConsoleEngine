@@ -18,8 +18,7 @@ namespace Jasily.Framework.ConsoleEngine.Formaters
 
         public IEnumerable<FormatedString> Format(CommandMapper commandMapper)
         {
-            var command = commandMapper.Name;
-            yield return new FormatedString($"{command}{this.GetIndent()}{commandMapper.Desciption}");
+            yield return new FormatedString($"{commandMapper.Command}{this.GetIndent()}{commandMapper.Desciption}");
         }
     }
 }

@@ -11,7 +11,11 @@ namespace Jasily.Framework.ConsoleEngine.Mappers
         public CommandAttributeMapper(CommandSource commandSource)
         {
             this.commandSource = commandSource;
+
+            this.IsSubCommand = this.GetCustomAttribute<SubCommandAttribute>() != null;
         }
+
+        public bool IsSubCommand { get; }
 
         protected override T GetCustomAttribute<T>()
             => this.commandSource.GetMapObject().GetCustomAttribute<T>();

@@ -1,5 +1,4 @@
-﻿using Jasily.Framework.ConsoleEngine.Commands;
-using System;
+﻿using System;
 using System.Linq;
 
 namespace Jasily.Framework.ConsoleEngine.Mappers
@@ -8,7 +7,7 @@ namespace Jasily.Framework.ConsoleEngine.Mappers
     {
         private readonly bool isStatic;
         private readonly Func<object> constructor;
-        private ICommand instance;
+        private object instance;
 
         private CommandClassBuilder(bool isStatic, Func<object> constructor)
         {
@@ -16,16 +15,16 @@ namespace Jasily.Framework.ConsoleEngine.Mappers
             this.constructor = constructor;
         }
 
-        public ICommand Build()
+        public object Build()
         {
             if (this.isStatic)
             {
-                this.instance = this.instance ?? (ICommand)this.constructor();
+                this.instance = this.instance ?? this.constructor();
                 return this.instance;
             }
             else
             {
-                return (ICommand)this.constructor();
+                return this.constructor();
             }
         }
 

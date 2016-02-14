@@ -101,7 +101,15 @@ namespace Jasily.Framework.ConsoleEngine.Mappers
         {
             foreach (var list in changed.Distinct())
             {
-                list.Sort((x, y) => ((int)x.CommandType).CompareTo((int)y.CommandType));
+                list.Sort((x, y) =>
+                {
+                    if (x.AttributeMapper.IsSubCommand != y.AttributeMapper.IsSubCommand)
+                    {
+                        return x.AttributeMapper.IsSubCommand ? -1 : 1;
+                    }
+
+                    return ((int) x.CommandType).CompareTo((int) y.CommandType);
+                });
             }
         }
 
@@ -111,7 +119,7 @@ namespace Jasily.Framework.ConsoleEngine.Mappers
         {
             var command = line.CommandBlock.OriginText;
             var list = this.commandMappersMap.GetValueOrDefault(command.ToLower());
-            return list?.FirstOrDefault(mapper => mapper.IsMatch(command));
+            return list?.FirstOrDefault(mapper => mapper.IsMatch(line));
         }
 
         public ConverterAgent GetAgent() => new ConverterAgent(this.Converters, this.registedDefaultValue);

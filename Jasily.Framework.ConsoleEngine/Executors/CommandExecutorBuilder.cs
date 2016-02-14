@@ -42,6 +42,7 @@ namespace Jasily.Framework.ConsoleEngine.Executors
         internal static CommandExecutorBuilder TryCreate(CommandMapper mapper, ConverterAgent agent)
         {
             var builder = new CommandExecutorBuilder(mapper.CommandSource.SourceType);
+
             var dict = new Dictionary<string, bool>();
             switch (mapper.CommandSource.SourceType)
             {

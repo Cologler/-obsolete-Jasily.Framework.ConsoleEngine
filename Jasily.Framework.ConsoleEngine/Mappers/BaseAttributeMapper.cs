@@ -38,6 +38,8 @@ namespace Jasily.Framework.ConsoleEngine.Mappers
     {
         public IReadOnlyList<AliasAttribute> AliasAttribute { get; private set; }
 
+        public IEnumerable<string> Alias => this.AliasAttribute.Select(z => z.Name);
+
         public DesciptionAttribute DesciptionAttribute { get; private set; }
 
         internal virtual bool TryMap()

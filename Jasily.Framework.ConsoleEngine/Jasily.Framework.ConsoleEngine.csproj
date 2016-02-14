@@ -47,6 +47,7 @@
     <Compile Include="Attributes\NameAttribute.cs" />
     <Compile Include="Attributes\PropertyParameterAttribute.cs" />
     <Compile Include="Attributes\StaticAttribute.cs" />
+    <Compile Include="Attributes\SubCommandAttribute.cs" />
     <Compile Include="CommandLine.cs" />
     <Compile Include="Commands\IDesciptionCommand.cs" />
     <Compile Include="Commands\IGroupingCommand.cs" />
@@ -56,6 +57,7 @@
     <Compile Include="Converters\DecimalConverter.cs" />
     <Compile Include="Converters\DigitConverter.cs" />
     <Compile Include="Converters\DoubleConverter.cs" />
+    <Compile Include="Exceptions\MapException.cs" />
     <Compile Include="Executors\IParameterSetter.cs" />
     <Compile Include="Executors\ParameterSetter.cs" />
     <Compile Include="IApplicationDescription.cs" />
