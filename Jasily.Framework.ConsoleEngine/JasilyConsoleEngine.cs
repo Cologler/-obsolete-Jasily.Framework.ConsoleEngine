@@ -23,7 +23,15 @@ namespace Jasily.Framework.ConsoleEngine
             this.MapperManager = new MapperManager(this);
         }
 
-        public Session StartSession() => new Session(this);
+        public Session StartSession(IApplicationDescription desc = null)
+        {
+            var s = new Session(this)
+            {
+                Description = desc
+            };
+            s.ShowDescription();
+            return s;
+        }
 
         public class BuiltInMembers
         {
