@@ -2,7 +2,7 @@
 
 namespace Jasily.Framework.ConsoleEngine.IO
 {
-    public class ConsoleOutput : IOutput
+    public sealed class ConsoleOutput : IOutput
     {
         public void Write(string value) => Console.Write(value ?? string.Empty);
 

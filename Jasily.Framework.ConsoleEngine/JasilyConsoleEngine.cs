@@ -23,9 +23,9 @@ namespace Jasily.Framework.ConsoleEngine
             this.MapperManager = new MapperManager(this);
         }
 
-        public Session StartSession(IApplicationDescription desc = null)
+        public Session StartSession(string name = null, IApplicationDescription desc = null)
         {
-            var s = new Session(this)
+            var s = new Session(this, name)
             {
                 Description = desc
             };
@@ -43,6 +43,8 @@ namespace Jasily.Framework.ConsoleEngine
 
             public ICommand NoneInput { get; set; }
 
+            public IInput Input { get; set; }
+
             public IOutput Output { get; set; }
 
             public IParametersFormater MissingParametersFormater { get; set; }
@@ -59,6 +61,7 @@ namespace Jasily.Framework.ConsoleEngine
                     CommandParameterParser = Singleton<CommandParameterParser>.Instance,
                     Helper = Singleton<HelpCommand>.Instance,
                     NoneInput = Singleton<NoneCommandHandler>.Instance,
+                    Input = Singleton<ConsoleInput>.Instance,
                     Output = Singleton<ConsoleOutput>.Instance,
                     MissingParametersFormater = Singleton<MissingParametersFormater>.Instance,
                     CommandFormater = Singleton<CommandFormater>.Instance,

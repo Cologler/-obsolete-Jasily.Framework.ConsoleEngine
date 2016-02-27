@@ -18,5 +18,7 @@ namespace Jasily.Framework.ConsoleEngine.Mappers
         }
 
         public override bool IsOptional => this.AttributeMapper.NameAttribute.IsOptional;
+
+        public override bool IsInternal => false;
     }
 }

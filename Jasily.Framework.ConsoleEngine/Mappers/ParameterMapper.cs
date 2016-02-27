@@ -16,5 +16,7 @@ namespace Jasily.Framework.ConsoleEngine.Mappers
         public abstract bool IsOptional { get; }
 
         bool IParameterMapper.IsMatch(string commandLine) => this.IsMatch(commandLine);
+
+        public abstract bool IsInternal { get; }
     }
 }

@@ -11,7 +11,7 @@ namespace Jasily.Framework.ConsoleEngine.Mappers
     {
         public TNameAttribute NameAttribute { get; protected set; }
 
-        public virtual string Name => this.NameAttribute.Name;
+        public string Name => this.NameAttribute.Name;
 
         internal override bool TryMap()
         {

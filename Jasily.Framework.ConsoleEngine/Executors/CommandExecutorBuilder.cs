@@ -133,6 +133,6 @@ namespace Jasily.Framework.ConsoleEngine.Executors
             return builder;
         }
 
-        public IEnumerable<IParameterMapper> Mappers => this.parameterMappers;
+        public IEnumerable<IParameterMapper> Mappers => this.parameterMappers.Where(z => !z.IsInternal);
     }
 }

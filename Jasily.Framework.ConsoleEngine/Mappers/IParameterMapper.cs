@@ -5,5 +5,7 @@ namespace Jasily.Framework.ConsoleEngine.Mappers
         bool IsOptional { get; }
 
         bool IsMatch(string commandLine);
+
+        bool IsInternal { get; }
     }
 }

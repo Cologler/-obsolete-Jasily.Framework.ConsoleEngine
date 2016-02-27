@@ -7,12 +7,14 @@ using System.Linq;
 
 namespace Jasily.Framework.ConsoleEngine
 {
-    public sealed class Session : IOutput, IDisposable
+    public sealed class Session : IInput, IOutput, IDisposable
     {
+        private readonly string name;
         private readonly List<CommandLine> historys = new List<CommandLine>();
 
-        public Session(JasilyConsoleEngine engine)
+        internal Session(JasilyConsoleEngine engine, string name = null)
         {
+            this.name = name ?? string.Empty;
             this.Engine = engine;
         }
 
@@ -114,5 +116,19 @@ namespace Jasily.Framework.ConsoleEngine
 
         public void WriteLine(string line = null)
             => this.Engine.GetCommandMember(z => z.Output).WriteLine(line ?? string.Empty);
+
+        public string ReadLine()
+            => this.Engine.GetCommandMember(z => z.Input).ReadLine();
+
+        public void StartUp()
+        {
+            while (true)
+            {
+                this.Write(this.name + "> ");
+                var line = this.ReadLine() ?? string.Empty;
+                if (line.ToLower() == "exit") return;
+                this.Execute(line);
+            }
+        }
     }
 }

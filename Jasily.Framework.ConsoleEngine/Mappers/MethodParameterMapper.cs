@@ -21,11 +21,13 @@ namespace Jasily.Framework.ConsoleEngine.Mappers
 
         public override bool IsOptional { get; }
 
+        public override bool IsInternal => JasilyConsoleEngine.IsDefaultParameters(this.MapedType);
+
         public object DefaultValue { get; }
 
         public override IEnumerable<string> GetNames()
         {
-            return JasilyConsoleEngine.IsDefaultParameters(this.MapedType)
+            return this.IsInternal
                 ? Enumerable.Empty<string>()
                 : base.GetNames();
         }
