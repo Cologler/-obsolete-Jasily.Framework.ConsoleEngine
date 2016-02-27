@@ -36,7 +36,7 @@ namespace Jasily.Framework.ConsoleEngine.Mappers
 
         protected bool IsMatch(string name)
         {
-            return string.Equals(name, this.AttributeMapper.NameAttribute.Name,
+            return string.Equals(name, this.AttributeMapper.Name,
                 this.AttributeMapper.NameAttribute.IgnoreCase
                     ? StringComparison.OrdinalIgnoreCase
                     : StringComparison.Ordinal) ||

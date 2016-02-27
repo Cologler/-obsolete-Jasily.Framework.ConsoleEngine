@@ -30,28 +30,25 @@ namespace Jasily.Framework.ConsoleEngine.Executors
         public override bool IsVaildCommand() => this.settersMap.Count == 0 ||
             this.settersMap.Any(z => z.Value.SelectMany(x => x.Value).All(c => c.IsVaild));
 
-        public override void Execute(Session session, CommandLine line)
+        protected override void InternalExecute(Session session, CommandLine line)
         {
-            if (this.IsVaildCommand())
+            foreach (var task in this.Setters.Where(z => z.IsSeted))
             {
-                foreach (var task in this.Setters.Where(z => z.IsSeted))
-                {
-                    task.Mapper.Setter(this.Obj, task.Value);
-                }
+                task.Mapper.Setter(this.Obj, task.Value);
+            }
 
-                var groupingCommand = this.Obj as IGroupingCommand;
-                if (groupingCommand != null)
-                {
-                    var worked = this.settersMap
-                        .Where(z => z.Value.SelectMany(x => x.Value).All(c => c.IsVaild))
-                        .Select(z => z.Key)
-                        .ToArray();
-                    groupingCommand.Execute(session, line, worked);
-                }
-                else
-                {
-                    ((ICommand)this.Obj).Execute(session, line);
-                }
+            var groupingCommand = this.Obj as IGroupingCommand;
+            if (groupingCommand != null)
+            {
+                var worked = this.settersMap
+                    .Where(z => z.Value.SelectMany(x => x.Value).All(c => c.IsVaild))
+                    .Select(z => z.Key)
+                    .ToArray();
+                groupingCommand.Execute(session, line, worked);
+            }
+            else
+            {
+                ((ICommand)this.Obj).Execute(session, line);
             }
         }
     }

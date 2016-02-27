@@ -47,16 +47,37 @@ namespace Jasily.Framework.ConsoleEngine.Executors
             ICommandParameterParser parameterParser,
             ConverterAgent converters)
         {
-            foreach (var kvp in parameterParser.Parse(commandLine, this.Setters))
+            // external
+            var externalSetters = this.Setters.Where(z => !z.Mapper.IsInternal).ToArray();
+            foreach (var kvp in parameterParser.Parse(commandLine, externalSetters))
             {
                 var setters = this.settersMap.GetValueOrDefault(kvp.Key);
                 var result = setters?
-                    .FirstOrDefault(z => z.Mapper.IsMatch(kvp.Key))?
+                    .FirstOrDefault(z => !z.Mapper.IsInternal && z.Mapper.IsMatch(kvp.Key))?
                     .PrevSetValue(kvp.Value, converters);
                 if (result?.HasError == true) return result.Value;
             }
+
             return null;
         }
+
+        public override void Execute(Session session, CommandLine line)
+        {
+            if (this.IsVaildCommand())
+            {
+                foreach (var task in this.Setters.Where(z => z.Mapper.IsInternal))
+                {
+                    if (task.Mapper.MapedType == typeof(Session)) task.SetValue(session);
+                    if (task.Mapper.MapedType == typeof(CommandLine)) task.SetValue(line);
+                }
+
+                this.InternalExecute(session, line);
+            }
+        }
+
+        protected abstract void InternalExecute(Session session, CommandLine line);
+
+        public override bool IsVaildCommand() => this.Setters.All(z => z.IsVaild || z.Mapper.IsInternal);
 
         public override IEnumerable<IParameterMapper> GetAllParameters()
             => this.Setters.Select(z => (IParameterMapper)z.Mapper);

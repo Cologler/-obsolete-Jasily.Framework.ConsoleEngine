@@ -16,22 +16,10 @@ namespace Jasily.Framework.ConsoleEngine.Executors
             this.methodParameterSetter = methodParameterSetter;
         }
 
-        public override bool IsVaildCommand() => this.Setters.All(
-            z => z.IsVaild || JasilyConsoleEngine.IsDefaultParameters(z.Mapper.MapedType));
-
-        public override void Execute(Session session, CommandLine line)
+        protected override void InternalExecute(Session session, CommandLine line)
         {
-            if (this.IsVaildCommand())
-            {
-                foreach (var task in this.Setters.Where(z => !z.IsVaild))
-                {
-                    if (task.Mapper.MapedType == typeof(Session)) task.SetValue(session);
-                    if (task.Mapper.MapedType == typeof(CommandLine)) task.SetValue(line);
-                }
-
-                var args = this.Setters.Select(z => z.IsSeted ? z.Value : z.Mapper.DefaultValue).ToArray();
-                this.methodParameterSetter(this.Obj, args);
-            }
+            var args = this.Setters.Select(z => z.IsSeted ? z.Value : z.Mapper.DefaultValue).ToArray();
+            this.methodParameterSetter(this.Obj, args);
         }
 
         public override IEnumerable<IParameterMapper> GetMissingParameters()
