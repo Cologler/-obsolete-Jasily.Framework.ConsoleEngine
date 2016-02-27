@@ -9,7 +9,6 @@ namespace Jasily.Framework.ConsoleEngine
 {
     public sealed class Session : IInput, IOutput, IDisposable
     {
-        private bool isShutdowned;
         private readonly string name;
         private readonly List<CommandLine> historys = new List<CommandLine>();
 
@@ -107,10 +106,7 @@ namespace Jasily.Framework.ConsoleEngine
             command.Execute(this, commandLine);
         }
 
-        public void Dispose()
-        {
-
-        }
+        public void Dispose() => this.Shutdown();
 
         public void Write(string value)
             => this.Engine.GetCommandMember(z => z.Output).Write(value);
@@ -123,9 +119,9 @@ namespace Jasily.Framework.ConsoleEngine
 
         public void StartUp()
         {
-            if (this.isShutdowned) throw new InvalidOperationException();
+            if (this.IsShutdowned) throw new InvalidOperationException();
 
-            while (!this.isShutdowned)
+            while (!this.IsShutdowned)
             {
                 this.Write(this.name + "> ");
                 var line = this.ReadLine() ?? string.Empty;
@@ -133,9 +129,8 @@ namespace Jasily.Framework.ConsoleEngine
             }
         }
 
-        public void Shutdown()
-        {
-            this.isShutdowned = true;
-        }
+        public void Shutdown() => this.IsShutdowned = true;
+
+        public bool IsShutdowned { get; private set; }
     }
 }

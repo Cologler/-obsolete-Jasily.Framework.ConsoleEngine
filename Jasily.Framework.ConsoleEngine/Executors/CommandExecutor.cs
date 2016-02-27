@@ -25,7 +25,7 @@ namespace Jasily.Framework.ConsoleEngine.Executors
     public abstract class CommandExecutor<TMapper> : CommandExecutor
         where TMapper : IParameterMapper
     {
-        private readonly Dictionary<string, List<ParameterSetter<TMapper>>> settersMap
+        private readonly Dictionary<string, List<ParameterSetter<TMapper>>> externalSettersMap
             = new Dictionary<string, List<ParameterSetter<TMapper>>>();
         protected readonly ParameterSetter<TMapper>[] Setters;
         protected readonly object Obj;
@@ -34,11 +34,11 @@ namespace Jasily.Framework.ConsoleEngine.Executors
         {
             this.Obj = obj;
             this.Setters = mappers.Select(z => new ParameterSetter<TMapper>(z)).ToArray();
-            foreach (var task in this.Setters)
+            foreach (var task in this.Setters.Where(z => !z.Mapper.IsInternal))
             {
                 foreach (var name in task.Mapper.GetNames())
                 {
-                    this.settersMap.GetOrCreateValue(name).Add(task);
+                    this.externalSettersMap.GetOrCreateValue(name).Add(task);
                 }
             }
         }
@@ -51,9 +51,9 @@ namespace Jasily.Framework.ConsoleEngine.Executors
             var externalSetters = this.Setters.Where(z => !z.Mapper.IsInternal).ToArray();
             foreach (var kvp in parameterParser.Parse(commandLine, externalSetters))
             {
-                var setters = this.settersMap.GetValueOrDefault(kvp.Key);
+                var setters = this.externalSettersMap.GetValueOrDefault(kvp.Key);
                 var result = setters?
-                    .FirstOrDefault(z => !z.Mapper.IsInternal && z.Mapper.IsMatch(kvp.Key))?
+                    .FirstOrDefault(z => z.Mapper.IsMatch(kvp.Key))?
                     .PrevSetValue(kvp.Value, converters);
                 if (result?.HasError == true) return result.Value;
             }
@@ -84,7 +84,5 @@ namespace Jasily.Framework.ConsoleEngine.Executors
 
         public override IEnumerable<IParameterMapper> GetMissingParameters()
             => this.Setters.Where(z => z.IsMissing).Select(z => (IParameterMapper)z.Mapper);
-
-
     }
 }

@@ -1,7 +1,7 @@
-using System.Diagnostics;
 using Jasily.Framework.ConsoleEngine.Converters;
 using Jasily.Framework.ConsoleEngine.Entities;
 using Jasily.Framework.ConsoleEngine.Mappers;
+using System.Diagnostics;
 
 namespace Jasily.Framework.ConsoleEngine.Executors
 {
@@ -52,6 +52,6 @@ namespace Jasily.Framework.ConsoleEngine.Executors
 
         public bool IsVaild { get; private set; }
 
-        public bool IsMissing => !this.Mapper.IsOptional && !this.IsSeted;
+        public bool IsMissing => !this.Mapper.IsInternal && !this.Mapper.IsOptional && !this.IsSeted;
     }
 }
