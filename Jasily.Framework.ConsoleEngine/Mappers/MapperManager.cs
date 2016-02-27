@@ -1,4 +1,5 @@
-﻿using Jasily.Framework.ConsoleEngine.Converters;
+﻿using Jasily.Framework.ConsoleEngine.Commands;
+using Jasily.Framework.ConsoleEngine.Converters;
 using Jasily.Framework.ConsoleEngine.Extensions;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,6 @@ namespace Jasily.Framework.ConsoleEngine.Mappers
 {
     public class MapperManager
     {
-        private readonly JasilyConsoleEngine engine;
         private readonly List<Assembly> registedAssemblys = new List<Assembly>();
         private readonly Dictionary<Type, List<CommandMapper>> registedTypes
             = new Dictionary<Type, List<CommandMapper>>();
@@ -21,13 +21,14 @@ namespace Jasily.Framework.ConsoleEngine.Mappers
 
         public ConvertersMapper Converters { get; } = new ConvertersMapper();
 
-        public MapperManager(JasilyConsoleEngine engine)
+        internal MapperManager(JasilyConsoleEngine engine)
         {
-            this.engine = engine;
             this.RegistConverter(new BooleanConverter());
             this.RegistConverter(new Int32Converter());
             this.RegistConverter(new DoubleConverter());
             this.RegistConverter(new DecimalConverter());
+
+            this.RegistCommand(typeof(ExitCommand));
         }
 
         public void RegistCommand(Type type)
@@ -79,7 +80,7 @@ namespace Jasily.Framework.ConsoleEngine.Mappers
         {
             if (this.registedTypes.ContainsKey(type)) return Enumerable.Empty<List<CommandMapper>>();
 
-            var mappers = CommandMapper.TryMap(type, this.engine.MapperManager.GetAgent()).ToList();
+            var mappers = CommandMapper.TryMap(type, this.GetAgent()).ToList();
             this.registedTypes.Add(type, mappers);
             this.mappedCommands.AddRange(mappers);
 
@@ -108,7 +109,7 @@ namespace Jasily.Framework.ConsoleEngine.Mappers
                         return x.AttributeMapper.IsSubCommand ? -1 : 1;
                     }
 
-                    return ((int) x.CommandType).CompareTo((int) y.CommandType);
+                    return ((int)x.CommandType).CompareTo((int)y.CommandType);
                 });
             }
         }
