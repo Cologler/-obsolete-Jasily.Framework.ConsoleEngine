@@ -48,10 +48,10 @@ namespace Jasily.Framework.ConsoleEngine
         }
 
         public void Help()
-            => this.Execute(this.ConsoleParameters.Helper, CommandLine.Empty);
+            => this.Execute(this.ConsoleParameters.HelpCommand, CommandLine.Empty);
 
         public void Help(CommandLine commandLine)
-            => this.Execute(this.ConsoleParameters.Helper, commandLine);
+            => this.Execute(this.ConsoleParameters.HelpCommand, commandLine);
 
         public void Execute(string command)
         {
@@ -61,8 +61,8 @@ namespace Jasily.Framework.ConsoleEngine
 
             if (commandLine.CommandBlock == null)
             {
-                this.Execute(this.ConsoleParameters.NoneInput, commandLine);
-                this.Execute(this.ConsoleParameters.Helper, commandLine);
+                this.Execute(this.ConsoleParameters.NoneInputCommand, commandLine);
+                this.Execute(this.ConsoleParameters.HelpCommand, commandLine);
             }
             else
             {
@@ -72,7 +72,7 @@ namespace Jasily.Framework.ConsoleEngine
                     this.Execute(mapper, commandLine);
                     return;
                 }
-                this.Execute(this.ConsoleParameters.Helper, commandLine);
+                this.Execute(this.ConsoleParameters.HelpCommand, commandLine);
             }
         }
 

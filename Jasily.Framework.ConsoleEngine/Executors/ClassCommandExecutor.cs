@@ -1,8 +1,8 @@
+using System.Collections.Generic;
+using System.Linq;
 using Jasily.Framework.ConsoleEngine.Commands;
 using Jasily.Framework.ConsoleEngine.Extensions;
 using Jasily.Framework.ConsoleEngine.Mappers;
-using System.Collections.Generic;
-using System.Linq;
 
 namespace Jasily.Framework.ConsoleEngine.Executors
 {
@@ -40,11 +40,11 @@ namespace Jasily.Framework.ConsoleEngine.Executors
             var groupingCommand = this.Obj as IGroupingCommand;
             if (groupingCommand != null)
             {
-                var worked = this.settersMap
+                var groups = this.settersMap
                     .Where(z => z.Value.SelectMany(x => x.Value).All(c => c.IsVaild))
                     .Select(z => z.Key)
                     .ToArray();
-                groupingCommand.Execute(session, line, worked);
+                groupingCommand.Execute(session, line, groups);
             }
             else
             {

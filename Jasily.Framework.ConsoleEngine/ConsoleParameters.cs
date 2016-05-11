@@ -11,9 +11,9 @@ namespace Jasily.Framework.ConsoleEngine
 
         public ICommandParameterParser CommandParameterParser { get; set; }
 
-        public ICommand Helper { get; set; }
+        public ICommand HelpCommand { get; set; }
 
-        public ICommand NoneInput { get; set; }
+        public ICommand NoneInputCommand { get; set; }
 
         public IInput Input { get; set; }
 

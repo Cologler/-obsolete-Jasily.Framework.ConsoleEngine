@@ -1,7 +1,7 @@
-﻿using Jasily.Framework.ConsoleEngine.Executors;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using Jasily.Framework.ConsoleEngine.Executors;
 
 namespace Jasily.Framework.ConsoleEngine.Parameters
 {
@@ -30,7 +30,7 @@ namespace Jasily.Framework.ConsoleEngine.Parameters
             var spliters = ParameterSpliter.Parse(this.SpliterStyle).ToArray();
 
             var setters = parameterSetters as IParameterSetter[] ?? parameterSetters.ToArray();
-            using (var itor = commandLine.Blocks.GetEnumerator())
+            using (var itor = commandLine.ParameterBlocks.GetEnumerator())
             {
                 while (itor.MoveNext())
                 {

@@ -19,8 +19,8 @@ namespace Jasily.Framework.ConsoleEngine
                 {
                     CommandParser = this.userParameters.CommandParser ?? Singleton<CommandBlockParser>.Instance,
                     CommandParameterParser = this.userParameters.CommandParameterParser ?? Singleton<CommandParameterParser>.Instance,
-                    Helper = this.userParameters.Helper ?? Singleton<HelpCommand>.Instance,
-                    NoneInput = this.userParameters.NoneInput ?? Singleton<NoneCommandHandler>.Instance,
+                    HelpCommand = this.userParameters.HelpCommand ?? Singleton<HelpCommand>.Instance,
+                    NoneInputCommand = this.userParameters.NoneInputCommand ?? Singleton<NoneCommandHandler>.Instance,
                     Input = this.userParameters.Input ?? Singleton<ConsoleInput>.Instance,
                     Output = this.userParameters.Output ?? Singleton<ConsoleOutput>.Instance,
                     MissingParametersFormater = this.userParameters.MissingParametersFormater ?? Singleton<MissingParametersFormater>.Instance,

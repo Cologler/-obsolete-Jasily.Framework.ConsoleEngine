@@ -1,13 +1,13 @@
-﻿using Jasily.Framework.ConsoleEngine.Attributes;
-using Jasily.Framework.ConsoleEngine.Commands;
-using Jasily.Framework.ConsoleEngine.Converters;
-using Jasily.Framework.ConsoleEngine.Exceptions;
-using Jasily.Framework.ConsoleEngine.Executors;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using Jasily.Framework.ConsoleEngine.Attributes;
+using Jasily.Framework.ConsoleEngine.Commands;
+using Jasily.Framework.ConsoleEngine.Converters;
+using Jasily.Framework.ConsoleEngine.Exceptions;
+using Jasily.Framework.ConsoleEngine.Executors;
 
 namespace Jasily.Framework.ConsoleEngine.Mappers
 {
@@ -172,7 +172,7 @@ namespace Jasily.Framework.ConsoleEngine.Mappers
         {
             if (this.AttributeMapper.IsSubCommand)
             {
-                var secondBlock = commandLine.Blocks.FirstOrDefault();
+                var secondBlock = commandLine.ParameterBlocks.FirstOrDefault();
                 return secondBlock != null && this.IsMatch(secondBlock.OriginText);
             }
             else

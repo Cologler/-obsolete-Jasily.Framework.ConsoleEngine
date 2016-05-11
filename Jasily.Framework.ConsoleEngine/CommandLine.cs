@@ -14,10 +14,10 @@ namespace Jasily.Framework.ConsoleEngine
         {
             this.OriginCommand = originLine;
             this.CommandBlock = blocks.FirstOrDefault();
-            this.Blocks = new ReadOnlyCollection<CommandBlock>(blocks.Skip(1).ToArray());
+            this.ParameterBlocks = new ReadOnlyCollection<CommandBlock>(blocks.Skip(1).ToArray());
         }
 
-        public IEnumerable<CommandBlock> Blocks { get; }
+        public IEnumerable<CommandBlock> ParameterBlocks { get; }
 
         /// <summary>
         /// possible null.
