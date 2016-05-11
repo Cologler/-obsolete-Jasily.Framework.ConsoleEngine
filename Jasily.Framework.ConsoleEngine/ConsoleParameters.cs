@@ -7,7 +7,7 @@ namespace Jasily.Framework.ConsoleEngine
 {
     public struct ConsoleParameters
     {
-        public CommandBlockParser CommandParser { get; set; }
+        public ICommandBlockParser CommandParser { get; set; }
 
         public ICommandParameterParser CommandParameterParser { get; set; }
 

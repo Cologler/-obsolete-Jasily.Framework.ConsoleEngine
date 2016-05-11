@@ -1,32 +1,27 @@
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace Jasily.Framework.ConsoleEngine
 {
     public sealed class CommandLine
     {
-        public static CommandLine Empty { get; } = new CommandLine(string.Empty)
-        {
-            blocks = new CommandBlock[0]
-        };
+        public static CommandLine Empty { get; } = new CommandLine(string.Empty, new CommandBlock[0]);
 
-        private readonly string originLine;
-        private CommandBlock[] blocks = new CommandBlock[0];
+        public string OriginCommand { get; }
 
-        public CommandLine(string originLine)
+        internal CommandLine(string originLine, CommandBlock[] blocks)
         {
-            this.originLine = originLine;
+            this.OriginCommand = originLine;
+            this.CommandBlock = blocks.FirstOrDefault();
+            this.Blocks = new ReadOnlyCollection<CommandBlock>(blocks.Skip(1).ToArray());
         }
 
-        public IEnumerable<CommandBlock> Blocks => this.blocks;
+        public IEnumerable<CommandBlock> Blocks { get; }
 
-        public CommandBlock CommandBlock { get; private set; }
-
-        public void Parse(CommandBlockParser blockParser)
-        {
-            this.blocks = blockParser.Parse(this.originLine).ToArray();
-            this.CommandBlock = this.blocks.FirstOrDefault();
-            this.blocks = this.blocks.Skip(1).ToArray();
-        }
+        /// <summary>
+        /// possible null.
+        /// </summary>
+        public CommandBlock CommandBlock { get; }
     }
 }

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Jasily.Framework.ConsoleEngine
 {
-    public class CommandBlockParser
+    public class CommandBlockParser : ICommandBlockParser
     {
         public IEnumerable<CommandBlock> Parse(string command)
         {

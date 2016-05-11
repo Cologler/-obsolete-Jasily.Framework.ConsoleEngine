@@ -1,5 +1,7 @@
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using Jasily.Framework.ConsoleEngine.Commands;
 using Jasily.Framework.ConsoleEngine.IO;
@@ -10,18 +12,24 @@ namespace Jasily.Framework.ConsoleEngine
     public sealed class Session : IInput, IOutput, IDisposable
     {
         private readonly string name;
-        private readonly List<CommandLine> historys = new List<CommandLine>();
+        private readonly List<CommandLine> historys;
 
-        internal Session(JasilyConsoleEngine engine, string name = null)
+        internal Session(JasilyConsoleEngine engine, string name)
         {
-            this.name = name ?? string.Empty;
+            Debug.Assert(engine != null);
             this.Engine = engine;
+            this.name = name ?? string.Empty;
+
             this.ConsoleParameters = engine.Parameters;
+            this.historys = new List<CommandLine>();
+            this.Historys = new ReadOnlyCollection<CommandLine>(this.historys);
         }
 
         public JasilyConsoleEngine Engine { get; }
 
         public ConsoleParameters ConsoleParameters { get; }
+
+        public IReadOnlyList<CommandLine> Historys { get; }
 
         public Dictionary<string, object> State { get; } = new Dictionary<string, object>();
 
@@ -47,9 +55,9 @@ namespace Jasily.Framework.ConsoleEngine
 
         public void Execute(string command)
         {
-            var commandLine = new CommandLine(command);
+            var commandLine = new CommandLine(command,
+                this.ConsoleParameters.CommandParser.Parse(command).ToArray());
             this.historys.Add(commandLine);
-            commandLine.Parse(this.ConsoleParameters.CommandParser);
 
             if (commandLine.CommandBlock == null)
             {

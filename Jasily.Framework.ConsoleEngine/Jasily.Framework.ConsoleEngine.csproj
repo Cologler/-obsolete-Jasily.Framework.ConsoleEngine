@@ -76,6 +76,7 @@
     <Compile Include="Formaters\MissingParametersFormater.cs" />
     <Compile Include="Formaters\IParametersFormater.cs" />
     <Compile Include="Formaters\ParametersFormater.cs" />
+    <Compile Include="ICommandBlockParser.cs" />
     <Compile Include="IO\ConsoleInput.cs" />
     <Compile Include="IO\IInput.cs" />
     <Compile Include="Mappers\BaseAttributeMapper.cs" />
