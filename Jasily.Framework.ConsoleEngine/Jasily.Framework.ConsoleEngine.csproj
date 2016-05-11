@@ -54,6 +54,7 @@
     <Compile Include="Commands\IGroupingCommand.cs" />
     <Compile Include="Commands\IHelpCommand.cs" />
     <Compile Include="CommandType.cs" />
+    <Compile Include="ConsoleParameters.cs" />
     <Compile Include="Converters\BooleanConverter.cs" />
     <Compile Include="Converters\DecimalConverter.cs" />
     <Compile Include="Converters\DigitConverter.cs" />

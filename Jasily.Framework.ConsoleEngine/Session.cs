@@ -1,9 +1,9 @@
-using Jasily.Framework.ConsoleEngine.Commands;
-using Jasily.Framework.ConsoleEngine.IO;
-using Jasily.Framework.ConsoleEngine.Mappers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Jasily.Framework.ConsoleEngine.Commands;
+using Jasily.Framework.ConsoleEngine.IO;
+using Jasily.Framework.ConsoleEngine.Mappers;
 
 namespace Jasily.Framework.ConsoleEngine
 {
@@ -16,9 +16,12 @@ namespace Jasily.Framework.ConsoleEngine
         {
             this.name = name ?? string.Empty;
             this.Engine = engine;
+            this.ConsoleParameters = engine.Parameters;
         }
 
         public JasilyConsoleEngine Engine { get; }
+
+        public ConsoleParameters ConsoleParameters { get; }
 
         public Dictionary<string, object> State { get; } = new Dictionary<string, object>();
 
@@ -37,21 +40,21 @@ namespace Jasily.Framework.ConsoleEngine
         }
 
         public void Help()
-            => this.Execute(this.Engine.GetCommandMember(z => z.Helper), CommandLine.Empty);
+            => this.Execute(this.ConsoleParameters.Helper, CommandLine.Empty);
 
         public void Help(CommandLine commandLine)
-            => this.Execute(this.Engine.GetCommandMember(z => z.Helper), commandLine);
+            => this.Execute(this.ConsoleParameters.Helper, commandLine);
 
         public void Execute(string command)
         {
             var commandLine = new CommandLine(command);
             this.historys.Add(commandLine);
-            commandLine.Parse(this.Engine.GetCommandMember(z => z.CommandParser));
+            commandLine.Parse(this.ConsoleParameters.CommandParser);
 
             if (commandLine.CommandBlock == null)
             {
-                this.Execute(this.Engine.GetCommandMember(z => z.NoneInput), commandLine);
-                this.Execute(this.Engine.GetCommandMember(z => z.Helper), commandLine);
+                this.Execute(this.ConsoleParameters.NoneInput, commandLine);
+                this.Execute(this.ConsoleParameters.Helper, commandLine);
             }
             else
             {
@@ -61,7 +64,7 @@ namespace Jasily.Framework.ConsoleEngine
                     this.Execute(mapper, commandLine);
                     return;
                 }
-                this.Execute(this.Engine.GetCommandMember(z => z.Helper), commandLine);
+                this.Execute(this.ConsoleParameters.Helper, commandLine);
             }
         }
 
@@ -76,7 +79,7 @@ namespace Jasily.Framework.ConsoleEngine
             var obj = mapper.CommandClassBuilder.Build();
             var executor = mapper.ExecutorBuilder.CreateExecutor(obj);
             var r = executor.SetCommandLine(command,
-                this.Engine.GetCommandMember(z => z.CommandParameterParser),
+                this.ConsoleParameters.CommandParameterParser,
                 this.Engine.MapperManager.GetAgent());
             if (r.HasError)
             {
@@ -93,9 +96,9 @@ namespace Jasily.Framework.ConsoleEngine
                 var missing = executor.GetMissingParameters().ToArray();
                 if (missing.Length != 0)
                 {
-                    this.Engine.GetCommandMember(z => z.MissingParametersFormater)
-                        .Format(this.Engine.GetCommandMember(z => z.Output), mapper, missing,
-                            this.Engine.GetCommandMember(z => z.CommandParameterParser));
+                    this.ConsoleParameters.MissingParametersFormater
+                        .Format(this.ConsoleParameters.Output, mapper, missing,
+                            this.ConsoleParameters.CommandParameterParser);
                     this.Help(command);
                 }
             }
@@ -109,13 +112,13 @@ namespace Jasily.Framework.ConsoleEngine
         public void Dispose() => this.Shutdown();
 
         public void Write(string value)
-            => this.Engine.GetCommandMember(z => z.Output).Write(value);
+            => this.ConsoleParameters.Output.Write(value);
 
         public void WriteLine(string line = null)
-            => this.Engine.GetCommandMember(z => z.Output).WriteLine(line ?? string.Empty);
+            => this.ConsoleParameters.Output.WriteLine(line ?? string.Empty);
 
         public string ReadLine()
-            => this.Engine.GetCommandMember(z => z.Input).ReadLine();
+            => this.ConsoleParameters.Input.ReadLine();
 
         public void StartUp()
         {

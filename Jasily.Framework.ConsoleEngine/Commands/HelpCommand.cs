@@ -25,8 +25,8 @@ namespace Jasily.Framework.ConsoleEngine.Commands
             else
             {
                 this.HelpFor(mapper, session, line);
-                var parameterFormater = session.Engine.GetCommandMember(z => z.ParametersFormater);
-                var ParameterParser = session.Engine.GetCommandMember(z => z.CommandParameterParser);
+                var parameterFormater = session.ConsoleParameters.ParametersFormater;
+                var ParameterParser = session.ConsoleParameters.CommandParameterParser;
                 session.WriteLine();
                 session.WriteLine("parameters:");
                 foreach (var formatedString in parameterFormater.Format(mapper, mapper.ExecutorBuilder.Mappers, ParameterParser))
@@ -48,7 +48,7 @@ namespace Jasily.Framework.ConsoleEngine.Commands
             }
             else
             {
-                var commandFormater = session.Engine.GetCommandMember(z => z.CommandFormater);
+                var commandFormater = session.ConsoleParameters.CommandFormater;
                 foreach (var formatedString in commandFormater.Format(mapper))
                 {
                     session.WriteLine("  " + formatedString);
