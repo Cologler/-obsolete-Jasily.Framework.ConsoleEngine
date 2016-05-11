@@ -26,6 +26,7 @@ namespace Jasily.Framework.ConsoleEngine
                     MissingParametersFormater = this.userParameters.MissingParametersFormater ?? Singleton<MissingParametersFormater>.Instance,
                     CommandFormater = this.userParameters.CommandFormater ?? Singleton<CommandFormater>.Instance,
                     ParametersFormater = this.userParameters.ParametersFormater ?? Singleton<ParametersFormater>.Instance,
+                    HeaderFormater = this.userParameters.HeaderFormater ?? Singleton<HeaderFormater>.Instance,
                 };
             }
             set { this.userParameters = value; }

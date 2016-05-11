@@ -134,7 +134,7 @@ namespace Jasily.Framework.ConsoleEngine
 
             while (!this.IsShutdowned)
             {
-                this.Write(this.name + "> ");
+                this.ConsoleParameters.HeaderFormater.WriteHeader(this.ConsoleParameters.Output, this.name);
                 var line = this.ReadLine() ?? string.Empty;
                 this.Execute(line);
             }

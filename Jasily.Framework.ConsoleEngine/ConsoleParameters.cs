@@ -24,5 +24,7 @@ namespace Jasily.Framework.ConsoleEngine
         public ICommandFormater CommandFormater { get; set; }
 
         public IParametersFormater ParametersFormater { get; set; }
+
+        public IHeaderFormater HeaderFormater { get; set; }
     }
 }

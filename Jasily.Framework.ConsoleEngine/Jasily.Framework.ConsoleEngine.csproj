@@ -62,6 +62,8 @@
     <Compile Include="Exceptions\MapException.cs" />
     <Compile Include="Executors\IParameterSetter.cs" />
     <Compile Include="Executors\ParameterSetter.cs" />
+    <Compile Include="Formaters\HeaderFormater.cs" />
+    <Compile Include="Formaters\IHeaderFormater.cs" />
     <Compile Include="IApplicationDescription.cs" />
     <Compile Include="Converters\ConverterAgent.cs" />
     <Compile Include="Converters\EnumConverter.cs" />
