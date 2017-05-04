@@ -1,3 +1,5 @@
+# **The Project is obsoleted, [Here](https://github.com/Jasily/jasily.frameworks.cli-csharp) are the new framework.**
+
 # Jasily.Framework.ConsoleEngine
 
 [![Join the chat at https://gitter.im/Cologler/Jasily.Framework.ConsoleEngine](https://badges.gitter.im/Cologler/Jasily.Framework.ConsoleEngine.svg)](https://gitter.im/Cologler/Jasily.Framework.ConsoleEngine?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
